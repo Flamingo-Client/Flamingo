@@ -2,7 +2,7 @@
 
 **A modern, high-performance desktop API client** built with Electron, React, and TypeScript. Flamingo provides a powerful interface for crafting HTTP requests, managing environments and collections, and syncing your data across devices — all with end-to-end encryption.
 
-<img src="../assets/readme/image.png" alt="Flamingo screenshot">
+<img src="/assets/readme/image.png" alt="Flamingo screenshot">
 ---
 
 ## Features
