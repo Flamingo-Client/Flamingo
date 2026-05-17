@@ -16,7 +16,7 @@
   "scripts": {
     "react:dev": "vite",
     "react:build": "tsc && vite build",
-    "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:dev": "vite build && concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
     "electron:build": "npm run react:build && electron-builder",
     "electron:win": "electron-builder --win",
     "electron:linux": "electron-builder --linux",
