@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Collection } from '@/lib/types'
+import type { Collection, FlamingoRequest } from '@/lib/types'
 import { generateId } from '@/lib/utils'
 import { useSyncStore } from '@/lib/sync/sync-store'
 import { isConnected } from '@/lib/sync/sync-client'
@@ -27,13 +27,31 @@ function findAndModify(items: any[], id: string, fn: (item: any) => any): any[] 
   })
 }
 
+function collectRequestIds(items: any[]): string[] {
+  const ids: string[] = []
+  for (const item of items) {
+    if (typeof item === 'string') ids.push(item)
+    else if (item.children) ids.push(...collectRequestIds(item.children))
+  }
+  return ids
+}
+
 function triggerSync(collections: Collection[]) {
   if (!isConnected()) return
   const config = useSyncStore.getState().syncConfig
   if (!config?.sync_collections) return
 
-  import('@/lib/sync/sync-client').then(({ uploadData }) => {
-    uploadData('collection', JSON.stringify(collections)).catch(() => {})
+  Promise.all([
+    import('@/lib/sync/sync-client'),
+    import('@/stores/tab-store'),
+  ]).then(([{ uploadData }, { useTabStore }]) => {
+    const tabState = useTabStore.getState()
+    const ids = collectRequestIds(collections)
+    const requests: Record<string, FlamingoRequest> = {}
+    for (const id of ids) {
+      if (tabState.requests[id]) requests[id] = tabState.requests[id]
+    }
+    uploadData('collection', JSON.stringify({ collections, requests })).catch(() => {})
   })
 }
 

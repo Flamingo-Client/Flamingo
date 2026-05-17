@@ -4,6 +4,7 @@ import {
   Beaker,
   History,
   Star,
+  Folder,
   Settings,
   Search,
   PanelLeftClose,
@@ -25,14 +26,16 @@ import { generateId } from '@/lib/utils'
 import type { HttpMethod, AuthType, RequestBody, KeyValuePair } from '@/lib/types'
 import SettingsModal from './SettingsModal'
 import HistoryPanel from './HistoryPanel'
+import CollectionsPanel from './CollectionsPanel'
 import EnvironmentsPanel from './EnvironmentsPanel'
 import FavoritesPanel from './FavoritesPanel'
 import SyncPanel from './SyncPanel'
 
-type PanelType = 'history' | 'environments' | 'favorites' | 'sync'
+type PanelType = 'history' | 'collections' | 'environments' | 'favorites' | 'sync'
 
 const panels: { id: PanelType; label: string; icon: typeof Beaker }[] = [
   { id: 'history', label: 'History', icon: History },
+  { id: 'collections', label: 'Collections', icon: Folder },
   { id: 'environments', label: 'Environments', icon: Beaker },
   { id: 'favorites', label: 'Favorites', icon: Star },
   { id: 'sync', label: 'Sync', icon: RefreshCcw },
@@ -125,6 +128,7 @@ export default function Sidebar() {
             <ScrollArea className="flex-1">
               <div className="p-1">
                 {activePanel === 'history' && <HistoryPanel searchQuery={searchQuery} />}
+                {activePanel === 'collections' && <CollectionsPanel />}
                 {activePanel === 'environments' && <EnvironmentsPanel />}
                 {activePanel === 'favorites' && <FavoritesPanel />}
                 {activePanel === 'sync' && <SyncPanel />}
