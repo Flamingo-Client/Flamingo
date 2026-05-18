@@ -1,11 +1,14 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import {
-  Send, Save, Play, Code2,
+  Send, Save, Play, Code2, ChevronDown, Download, Bookmark,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
 import { useTabStore } from '@/stores/tab-store'
 import { useHistoryStore } from '@/stores/history-store'
 import { useEnvironmentStore } from '@/stores/environment-store'
@@ -13,7 +16,7 @@ import { useCollectionStore } from '@/stores/collection-store'
 import { getMethodColor, getMethodBgColor, generateId } from '@/lib/utils'
 import { parseCurl } from '@/lib/curl-parser'
 import { runPreRequestScript, runPostResponseScript } from '@/lib/script-runner'
-import type { HttpMethod, KeyValuePair, BodyType, AuthType } from '@/lib/types'
+import type { HttpMethod, KeyValuePair, BodyType, AuthType, FlamingoRequest } from '@/lib/types'
 import KeyValueEditor from './KeyValueEditor'
 import BodyEditor from './BodyEditor'
 
@@ -78,6 +81,24 @@ export default function RequestBuilder() {
       }
     }
   }, [request, activeTabId])
+
+  const handleExport = useCallback(() => {
+    if (!request) return
+    const data = JSON.stringify(
+      { format: 'flamingo-request', version: 1, request },
+      null,
+      2
+    )
+    const blob = new Blob([data], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${request.name.replace(/[^a-zA-Z0-9_-]/g, '_')}.flamreq`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }, [request])
 
   const handleSend = useCallback(async () => {
     if (!request || !activeTabId) return
@@ -307,10 +328,26 @@ export default function RequestBuilder() {
             Send
           </Button>
 
-          <Button variant="outline" size="sm" className="h-8 text-xs" onClick={handleSave}>
-            <Save className="h-3.5 w-3.5 mr-1" />
-            Save
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8 text-xs gap-1">
+                <Save className="h-3.5 w-3.5" />
+                Save
+                <ChevronDown className="h-3 w-3 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-[180px]">
+              <DropdownMenuItem onClick={handleSave} className="gap-2 text-xs">
+                <Bookmark className="h-3.5 w-3.5" />
+                Save to Collection
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleExport} className="gap-2 text-xs">
+                <Download className="h-3.5 w-3.5" />
+                Export as .flamreq
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

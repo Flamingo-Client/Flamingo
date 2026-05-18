@@ -1,4 +1,4 @@
-import { FlaskConical, Minus, Square, X, Cloud, CloudOff, Loader2 } from 'lucide-react'
+import { FlaskConical, Minus, Square, X, Cloud, CloudOff, Loader2, Moon, Laptop, Sun } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useThemeStore } from '@/stores/theme-store'
 import { useSettingsStore } from '@/stores/settings-store'
@@ -51,11 +51,11 @@ export default function TitleBar() {
           syncStatus === 'error' ? `Sync error: ${syncError || 'Unknown'}` :
           'Sync disconnected'
         }>
-          {syncStatus === 'connected' && <Cloud className="h-3 w-3 text-emerald-500" />}
-          {syncStatus === 'syncing' && <Loader2 className="h-3 w-3 text-primary animate-spin" />}
-          {syncStatus === 'error' && <CloudOff className="h-3 w-3 text-destructive" />}
-          {syncStatus === 'disconnected' && <CloudOff className="h-3 w-3 text-muted-foreground" />}
-          {syncStatus === 'connecting' && <Loader2 className="h-3 w-3 text-muted-foreground animate-spin" />}
+          {syncStatus === 'connected' && <Cloud className="h-4 w-4 text-emerald-500" />}
+          {syncStatus === 'syncing' && <Loader2 className="h-4 w-4 text-primary animate-spin" />}
+          {syncStatus === 'error' && <CloudOff className="h-4 w-4 text-destructive" />}
+          {syncStatus === 'disconnected' && <CloudOff className="h-4 w-4 text-muted-foreground" />}
+          {syncStatus === 'connecting' && <Loader2 className="h-4 w-4 text-muted-foreground animate-spin" />}
         </div>
 
         <Button
@@ -64,7 +64,7 @@ export default function TitleBar() {
           onClick={() => setTheme(theme === 'dark' ? 'light' : theme === 'light' ? 'system' : 'dark')}
           className="text-muted-foreground"
         >
-          {theme === 'dark' ? '🌙' : theme === 'light' ? '☀️' : '💻'}
+          {theme === 'dark' ? <Moon className='h-4 w-4'/> : theme === 'light' ? <Sun className='h-4 w-4'/> : <Laptop className='h-4 w-4'/>}
         </Button>
       </div>
 

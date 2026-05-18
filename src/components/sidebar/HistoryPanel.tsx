@@ -48,13 +48,17 @@ export default function HistoryPanel({ searchQuery }: Props) {
           key={entry.id}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="w-full flex items-center gap-1.5 px-2 py-1.5 text-xs rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-all group"
+          className="w-64 min-w-0 overflow-hidden flex items-center gap-1.5 px-2 py-1.5 text-xs rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-all group"
           onClick={() => handleClick(entry)}
         >
           <span className={`font-mono font-semibold text-[10px] w-10 shrink-0 text-left ${getMethodColor(entry.method)}`}>
             {entry.method}
           </span>
-          <span className="truncate flex-1 text-left min-w-0">{entry.url || 'No URL'}</span>
+
+          <span className="truncate min-w-0 flex-1 text-left">
+            {entry.url || 'No URL'}
+          </span>
+
           {entry.statusCode ? (
             <span className={`text-[10px] font-mono shrink-0 tabular-nums ${entry.statusCode < 300 ? 'text-emerald-500' : entry.statusCode < 500 ? 'text-amber-500' : 'text-red-500'}`}>
               {entry.statusCode}
@@ -62,6 +66,7 @@ export default function HistoryPanel({ searchQuery }: Props) {
           ) : (
             <span className="text-[10px] text-muted-foreground/40 shrink-0">---</span>
           )}
+
           <span className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0 flex" onClick={(e) => { e.stopPropagation(); removeEntry(entry.id) }}>
             <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
           </span>

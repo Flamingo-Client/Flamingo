@@ -5,6 +5,27 @@ import * as client from './sync-client'
 
 type SyncStore = SyncState & SyncActions
 
+function collectRequestIds(items: any[]): string[] {
+  const ids: string[] = []
+  for (const item of items) {
+    if (typeof item === 'string') ids.push(item)
+    else if (item.children) ids.push(...collectRequestIds(item.children))
+  }
+  return ids
+}
+
+function restoreCollectionData(parsed: any, useCollectionStore: any, useTabStore: any) {
+  if (Array.isArray(parsed)) {
+    useCollectionStore.setState({ collections: parsed })
+  } else {
+    useCollectionStore.setState({ collections: parsed.collections })
+    if (parsed.requests) {
+      const current = useTabStore.getState().requests
+      useTabStore.setState({ requests: { ...current, ...parsed.requests } })
+    }
+  }
+}
+
 const defaultConfig: SyncConfig = {
   sync_history: true,
   sync_environments: true,
@@ -72,9 +93,11 @@ export const useSyncStore = create<SyncStore>()(
                   case 'environment':
                     useEnvironmentStore.setState({ environments: parsed })
                     break
-                  case 'collection':
-                    useCollectionStore.setState({ collections: parsed })
+                  case 'collection': {
+                    const { useTabStore } = await import('@/stores/tab-store')
+                    restoreCollectionData(parsed, useCollectionStore, useTabStore)
                     break
+                  }
                   case 'setting':
                     useSettingsStore.setState({ settings: parsed })
                     break
@@ -132,7 +155,11 @@ export const useSyncStore = create<SyncStore>()(
           }
           if (config.sync_collections) {
             const collections = useCollectionStore.getState().collections
-            await client.uploadData('collection', JSON.stringify(collections))
+            const { useTabStore } = await import('@/stores/tab-store')
+            const tabState = useTabStore.getState()
+            const ids = collectRequestIds(collections)
+            const requests = Object.fromEntries(ids.map(id => [id, tabState.requests[id]]).filter(([, r]) => r))
+            await client.uploadData('collection', JSON.stringify({ collections, requests }))
           }
           if (config.sync_settings) {
             const settings = useSettingsStore.getState().settings
@@ -153,9 +180,11 @@ export const useSyncStore = create<SyncStore>()(
                 case 'environment':
                   useEnvironmentStore.setState({ environments: parsed })
                   break
-                case 'collection':
-                  useCollectionStore.setState({ collections: parsed })
+                case 'collection': {
+                  const { useTabStore } = await import('@/stores/tab-store')
+                  restoreCollectionData(parsed, useCollectionStore, useTabStore)
                   break
+                }
                 case 'setting':
                   useSettingsStore.setState({ settings: parsed })
                   break

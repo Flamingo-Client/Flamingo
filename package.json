@@ -1,6 +1,6 @@
 {
   "name": "flamingo",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "A modern desktop API client",
   "main": "electron/main.js",
   "homepage": "https://www.flamingo-client.com/",
@@ -16,7 +16,7 @@
   "scripts": {
     "react:dev": "vite",
     "react:build": "tsc && vite build",
-    "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:dev": "vite build && concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
     "electron:build": "npm run react:build && electron-builder",
     "electron:win": "electron-builder --win",
     "electron:linux": "electron-builder --linux",
@@ -70,7 +70,7 @@
     "@vitejs/plugin-react": "^4.3.2",
     "autoprefixer": "^10.4.20",
     "concurrently": "^9.0.1",
-    "electron": "^32.1.2",
+    "electron": "^42.1.0",
     "electron-builder": "^25.1.7",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
@@ -100,8 +100,7 @@
     "linux": {
       "target": [
         "AppImage",
-        "deb",
-        "rpm"
+        "deb"
       ],
       "category": "Utility",
       "icon": "assets/icons",
