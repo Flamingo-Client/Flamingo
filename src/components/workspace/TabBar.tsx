@@ -56,7 +56,7 @@ export default function TabBar() {
   if (tabs.length === 0) return null
 
   return (
-    <div className="flex items-center h-9 bg-muted/30 border-b border-border shrink-0">
+    <div className="flex items-center h-6 bg-muted/30 border-b border-border shrink-0">
       <ScrollArea className="flex-1 h-full">
         <div ref={scrollRef} className="flex items-center h-full">
           {tabs.map((tab) => (
@@ -65,7 +65,7 @@ export default function TabBar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className={`group relative flex items-center gap-1.5 px-3 h-full text-xs border-r border-border cursor-pointer transition-colors shrink-0 min-w-0 ${
+              className={`group relative flex items-center gap-1.5 px-3 text-xs border-r h-6 border-border cursor-pointer transition-colors shrink-0 min-w-0 ${
                 activeTabId === tab.id
                   ? 'bg-background text-foreground'
                   : 'bg-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50'
