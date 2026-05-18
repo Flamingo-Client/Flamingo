@@ -13,6 +13,7 @@ import { useHistoryStore } from '@/stores/history-store'
 import { useEnvironmentStore } from '@/stores/environment-store'
 import { useCollectionStore } from '@/stores/collection-store'
 import { useSettingsStore } from '@/stores/settings-store'
+import { useTabStore } from '@/stores/tab-store'
 
 export function SyncProvider({ children }: { children: React.ReactNode }) {
   const initialized = useRef(false)
@@ -72,9 +73,18 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
               case 'environment':
                 useEnvironmentStore.setState({ environments: parsed })
                 break
-              case 'collection':
-                useCollectionStore.setState({ collections: parsed })
+              case 'collection': {
+                if (Array.isArray(parsed)) {
+                  useCollectionStore.setState({ collections: parsed })
+                } else {
+                  useCollectionStore.setState({ collections: parsed.collections })
+                  if (parsed.requests) {
+                    const current = useTabStore.getState().requests
+                    useTabStore.setState({ requests: { ...current, ...parsed.requests } })
+                  }
+                }
                 break
+              }
               case 'setting':
                 useSettingsStore.setState({ settings: parsed })
                 break
