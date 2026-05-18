@@ -78,7 +78,7 @@ export default function Sidebar() {
             animate={{ width: 260, opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
             transition={{ duration: 0.2, ease: 'easeInOut' }}
-            className="border-r border-sidebar-border bg-sidebar flex flex-col shrink-0 overflow-hidden"
+            className="border-r border-sidebar-border bg-sidebar flex flex-col shrink-0 overflow-hidden w-64"
           >
             <div className="flex items-center gap-1 p-2 pb-0">
               <div className="flex-1 flex items-center gap-0.5 overflow-x-auto">
