@@ -159,6 +159,7 @@ export default function ResponseViewer() {
                   readOnly: true,
                   minimap: { enabled: false },
                   fontSize: settings.fontSize,
+                  fontFamily: "GoogleSansCode",
                   lineNumbers: 'on',
                   scrollBeyondLastLine: false,
                   wordWrap: 'on',
