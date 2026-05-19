@@ -69,7 +69,7 @@ export default function ResponseViewer() {
 
   const statusColor = response.statusCode === 0 ? 'destructive' :
     response.statusCode < 300 ? 'success' :
-    response.statusCode < 500 ? 'warning' : 'destructive'
+      response.statusCode < 500 ? 'warning' : 'destructive'
 
   return (
     <motion.div
@@ -110,7 +110,7 @@ export default function ResponseViewer() {
         </div>
       </div>
 
-      <Tabs value={activeView} onValueChange={(v) => setActiveView(v as TabView)} className="flex-1 flex flex-col">
+      <Tabs value={activeView} onValueChange={(v) => setActiveView(v as TabView)} className="flex flex-1 min-h-0 flex-col">
         <div className="flex items-center justify-between px-2 pt-1 shrink-0">
           <TabsList className="h-6">
             <TabsTrigger value="pretty" className="text-[10px] px-2 py-0.5">
@@ -142,7 +142,7 @@ export default function ResponseViewer() {
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 p-2 pt-1">
+        <div className="flex flex-col flex-1 min-h-0 p-2 pt-1">
           <TabsContent value="pretty" className="mt-0 h-full">
             <div className="h-full rounded-md border border-border overflow-hidden">
               <Editor
@@ -159,6 +159,7 @@ export default function ResponseViewer() {
                   readOnly: true,
                   minimap: { enabled: false },
                   fontSize: settings.fontSize,
+                  fontFamily: "GoogleSansCode",
                   lineNumbers: 'on',
                   scrollBeyondLastLine: false,
                   wordWrap: 'on',
@@ -198,10 +199,12 @@ export default function ResponseViewer() {
           </TabsContent>
 
           {detectedLang === 'json' && (
-            <TabsContent value="tree" className="mt-0 h-full">
-              <ScrollArea className="h-full rounded-md border border-border p-2">
-                <JSONTree data={response.body} />
-              </ScrollArea>
+            <TabsContent value="tree" className="mt-0 h-full overflow-hidden">
+              <div className="h-full">
+                <ScrollArea className="h-full rounded-md border border-border p-2">
+                  <JSONTree data={response.body} />
+                </ScrollArea>
+              </div>
             </TabsContent>
           )}
           <TabsContent value="headers" className="mt-0 h-full">
@@ -283,17 +286,17 @@ function JSONNode({ value, depth }: { value: any; depth: number }) {
         <div>
           {isArray
             ? (value as any[]).map((item, i) => (
-                <div key={i} className="flex">
-                  <span className="text-muted-foreground/50 text-[10px]" style={{ paddingLeft: indent + 16 }}>{i}: </span>
-                  <JSONNode value={item} depth={depth + 1} />
-                </div>
-              ))
+              <div key={i} className="flex">
+                <span className="text-muted-foreground/50 text-[10px]" style={{ paddingLeft: indent + 16 }}>{i}: </span>
+                <JSONNode value={item} depth={depth + 1} />
+              </div>
+            ))
             : Object.entries(value).map(([key, val]) => (
-                <div key={key} className="flex items-start">
-                  <span className="text-cyan-500 text-[10px] shrink-0" style={{ paddingLeft: indent + 16 }}>{key}: </span>
-                  <JSONNode value={val} depth={depth + 1} />
-                </div>
-              ))
+              <div key={key} className="flex items-start">
+                <span className="text-cyan-500 text-[10px] shrink-0" style={{ paddingLeft: indent + 16 }}>{key}: </span>
+                <JSONNode value={val} depth={depth + 1} />
+              </div>
+            ))
           }
         </div>
       )}

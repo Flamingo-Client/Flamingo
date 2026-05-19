@@ -107,6 +107,7 @@ export default function BodyEditor({ request }: Props) {
             options={{
               minimap: { enabled: false },
               fontSize: settings.fontSize,
+              fontFamily: "GoogleSansCode",
               lineNumbers: 'on',
               scrollBeyondLastLine: false,
               wordWrap: 'on',

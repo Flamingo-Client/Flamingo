@@ -160,6 +160,7 @@ function ResponsePanel({
               readOnly: true,
               minimap: { enabled: false },
               fontSize,
+              fontFamily: "GoogleSansCode",
               lineNumbers: 'on',
               scrollBeyondLastLine: false,
               wordWrap: 'on',
