@@ -1,0 +1,64 @@
+version: 2
+
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "Europe/Madrid"
+
+    open-pull-requests-limit: 5
+
+    labels:
+      - "dependencies"
+      - "npm"
+
+    commit-message:
+      prefix: "deps"
+
+    reviewers:
+      - "TU_USUARIO_GITHUB"
+
+    versioning-strategy: increase
+
+    groups:
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react*"
+
+      vite:
+        patterns:
+          - "vite"
+          - "@vitejs/*"
+
+      electron:
+        patterns:
+          - "electron"
+          - "electron-builder"
+          - "electron-vite"
+
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+
+    schedule:
+      interval: "weekly"
+
+    labels:
+      - "github-actions"
