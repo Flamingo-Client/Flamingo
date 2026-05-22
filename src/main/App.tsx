@@ -11,6 +11,7 @@ import TabBar from '@/components/workspace/TabBar'
 import RequestBuilder from '@/components/request/RequestBuilder'
 import ResponseViewer from '@/components/response/ResponseViewer'
 import CommandPalette from '@/components/workspace/CommandPalette'
+import UpdatePopup from '@/components/UpdatePopup'
 
 export default function App() {
   const { theme, resolvedTheme, setTheme, setResolvedTheme } = useThemeStore()
@@ -78,6 +79,7 @@ export default function App() {
             </main>
           </div>
           <CommandPalette />
+          <UpdatePopup />
         </div>
       </SyncProvider>
     </TooltipProvider>
