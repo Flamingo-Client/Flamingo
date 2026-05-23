@@ -30,6 +30,7 @@ export default function RequestBuilder() {
 
   const [activeSection, setActiveSection] = useState<string>('params')
   const urlInputRef = useRef<HTMLInputElement>(null)
+  const updatingFromParams = useRef(false)
 
   const activeTab = tabs.find((t) => t.id === activeTabId)
   const request = activeTab ? requests[activeTab.requestId] : null
@@ -47,16 +48,34 @@ export default function RequestBuilder() {
   }, [request, updateRequest])
 
   const handleUrlChange = useCallback((url: string) => {
-    if (request) updateRequest(request.id, { url })
+    if (!request) return
+    if (updatingFromParams.current) {
+      updatingFromParams.current = false
+      updateRequest(request.id, { url })
+      return
+    }
+    const qIndex = url.indexOf('?')
     const parsed = parseCurl(url)
-    if (parsed && request) {
+    if (parsed && parsed.url) {
       updateRequest(request.id, {
         method: parsed.method || request.method,
         url: parsed.url || request.url,
         headers: parsed.headers || request.headers,
         body: parsed.body || request.body,
-        name: parsed.url ? `Request ${parsed.url.slice(0, 30)}` : request.name,
+        name: `Request ${parsed.url.slice(0, 30)}`,
       })
+      return
+    }
+    updateRequest(request.id, { url })
+    if (qIndex !== -1) {
+      const qs = url.slice(qIndex + 1)
+      const params = qs.split('&').filter(Boolean).map((pair) => {
+        const eqIndex = pair.indexOf('=')
+        return eqIndex === -1
+          ? { id: generateId(), key: decodeURIComponent(pair), value: '', enabled: true }
+          : { id: generateId(), key: decodeURIComponent(pair.slice(0, eqIndex)), value: decodeURIComponent(pair.slice(eqIndex + 1)), enabled: true }
+      })
+      updateRequest(request.id, { url, params })
     }
   }, [request, updateRequest])
 
@@ -351,7 +370,15 @@ export default function RequestBuilder() {
           <TabsContent value="params" className="mt-0">
             <KeyValueEditor
               items={request.params}
-              onChange={(params) => updateRequest(request.id, { params })}
+              onChange={(params) => {
+                const base = request.url.includes('?') ? request.url.slice(0, request.url.indexOf('?')) : request.url
+                const enabled = params.filter((p: KeyValuePair) => p.key && p.enabled !== false)
+                const qs = enabled.length > 0
+                  ? '?' + enabled.map((p: KeyValuePair) => `${encodeURIComponent(p.key)}=${encodeURIComponent(p.value)}`).join('&')
+                  : ''
+                updatingFromParams.current = true
+                updateRequest(request.id, { params, url: base + qs })
+              }}
               namePlaceholder="Parameter name"
               valuePlaceholder="Parameter value"
             />
