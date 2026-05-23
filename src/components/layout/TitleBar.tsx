@@ -28,10 +28,10 @@ export default function TitleBar() {
           value={activeEnv?.id || 'global'}
           onValueChange={(v) => setActiveEnvironment(v)}
         >
-          <SelectTrigger className="h-6 text-xs w-auto min-w-[100px] border-0 bg-muted/50 hover:bg-muted px-2">
+          <SelectTrigger className="h-6 text-xs w-auto min-w-[100px] border-0 bg-muted/50 hover:bg-muted px-2 app-region-no-drag">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="app-region-no-drag">
             {environments.map((env) => (
               <SelectItem key={env.id} value={env.id}>
                 <span className="flex items-center gap-1">

@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Send, Save, Play, Code2, ChevronDown, Download, Bookmark,
 } from 'lucide-react'
@@ -12,13 +13,13 @@ import {
 import { useTabStore } from '@/stores/tab-store'
 import { useHistoryStore } from '@/stores/history-store'
 import { useEnvironmentStore } from '@/stores/environment-store'
-import { useCollectionStore } from '@/stores/collection-store'
 import { getMethodColor, getMethodBgColor, generateId } from '@/lib/utils'
 import { parseCurl } from '@/lib/curl-parser'
 import { runPreRequestScript, runPostResponseScript } from '@/lib/script-runner'
 import type { HttpMethod, KeyValuePair, BodyType, AuthType, FlamingoRequest } from '@/lib/types'
 import KeyValueEditor from './KeyValueEditor'
 import BodyEditor from './BodyEditor'
+import CollectionPicker from '@/components/CollectionPicker'
 
 const methods: HttpMethod[] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD']
 
@@ -29,6 +30,7 @@ export default function RequestBuilder() {
 
   const [activeSection, setActiveSection] = useState<string>('params')
   const urlInputRef = useRef<HTMLInputElement>(null)
+  const updatingFromParams = useRef(false)
 
   const activeTab = tabs.find((t) => t.id === activeTabId)
   const request = activeTab ? requests[activeTab.requestId] : null
@@ -46,40 +48,42 @@ export default function RequestBuilder() {
   }, [request, updateRequest])
 
   const handleUrlChange = useCallback((url: string) => {
-    if (request) updateRequest(request.id, { url })
+    if (!request) return
+    if (updatingFromParams.current) {
+      updatingFromParams.current = false
+      updateRequest(request.id, { url })
+      return
+    }
+    const qIndex = url.indexOf('?')
     const parsed = parseCurl(url)
-    if (parsed && request) {
+    if (parsed && parsed.url) {
       updateRequest(request.id, {
         method: parsed.method || request.method,
         url: parsed.url || request.url,
         headers: parsed.headers || request.headers,
         body: parsed.body || request.body,
-        name: parsed.url ? `Request ${parsed.url.slice(0, 30)}` : request.name,
+        name: `Request ${parsed.url.slice(0, 30)}`,
       })
+      return
+    }
+    updateRequest(request.id, { url })
+    if (qIndex !== -1) {
+      const qs = url.slice(qIndex + 1)
+      const params = qs.split('&').filter(Boolean).map((pair) => {
+        const eqIndex = pair.indexOf('=')
+        return eqIndex === -1
+          ? { id: generateId(), key: decodeURIComponent(pair), value: '', enabled: true }
+          : { id: generateId(), key: decodeURIComponent(pair.slice(0, eqIndex)), value: decodeURIComponent(pair.slice(eqIndex + 1)), enabled: true }
+      })
+      updateRequest(request.id, { url, params })
     }
   }, [request, updateRequest])
 
+  const [savePick, setSavePick] = useState<{ requestId: string } | null>(null)
+
   const handleSave = useCallback(() => {
     if (!request || !activeTabId) return
-    const { collections, selectedCollectionId, addRequestToCollection, createCollection } = useCollectionStore.getState()
-    if (collections.length === 0) {
-      const name = prompt('No collections yet. Create one:')
-      if (name) {
-        const id = createCollection(name)
-        addRequestToCollection(id, request.id)
-      }
-    } else if (selectedCollectionId) {
-      addRequestToCollection(selectedCollectionId, request.id)
-    } else {
-      const names = collections.map((c, i) => `${i + 1}. ${c.name}`).join('\n')
-      const choice = prompt(`Select collection (1-${collections.length}):\n${names}`)
-      if (choice) {
-        const idx = parseInt(choice) - 1
-        if (idx >= 0 && idx < collections.length) {
-          addRequestToCollection(collections[idx].id, request.id)
-        }
-      }
-    }
+    setSavePick({ requestId: request.id })
   }, [request, activeTabId])
 
   const handleExport = useCallback(() => {
@@ -366,7 +370,15 @@ export default function RequestBuilder() {
           <TabsContent value="params" className="mt-0">
             <KeyValueEditor
               items={request.params}
-              onChange={(params) => updateRequest(request.id, { params })}
+              onChange={(params) => {
+                const base = request.url.includes('?') ? request.url.slice(0, request.url.indexOf('?')) : request.url
+                const enabled = params.filter((p: KeyValuePair) => p.key && p.enabled !== false)
+                const qs = enabled.length > 0
+                  ? '?' + enabled.map((p: KeyValuePair) => `${encodeURIComponent(p.key)}=${encodeURIComponent(p.value)}`).join('&')
+                  : ''
+                updatingFromParams.current = true
+                updateRequest(request.id, { params, url: base + qs })
+              }}
               namePlaceholder="Parameter name"
               valuePlaceholder="Parameter value"
             />
@@ -394,6 +406,33 @@ export default function RequestBuilder() {
           </TabsContent>
         </div>
       </Tabs>
+
+      <AnimatePresence>
+        {savePick && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+            onClick={() => setSavePick(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.15 }}
+              className="bg-popover border border-border rounded-xl shadow-2xl w-72 p-3 space-y-2"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-sm font-semibold">Save to Collection</h3>
+              <CollectionPicker
+                requestId={savePick.requestId}
+                onDone={() => setSavePick(null)}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
