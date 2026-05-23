@@ -1,6 +1,6 @@
 {
   "name": "flamingo",
-  "version": "0.2.2",
+  "version": "1.0.0",
   "description": "A modern desktop API client",
   "main": "electron/main.js",
   "homepage": "https://www.flamingo-client.com/",
@@ -8,9 +8,6 @@
     {
       "name": "Javier Fernández (Jallox/Jayox)",
       "email": "jalllox.dev@gmail.com"
-    },
-    {
-      "name": "Miguel Fernández"
     }
   ],
   "scripts": {
