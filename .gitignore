@@ -4,3 +4,5 @@ dist-electron
 .env
 *.log
 .DS_Store
+
+stats.html
