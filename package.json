@@ -67,7 +67,7 @@
     "@vitejs/plugin-react": "^4.7.0",
     "autoprefixer": "^10.5.2",
     "concurrently": "^9.2.3",
-    "electron": "^42.2.0",
+    "electron": "^42.3.0",
     "electron-builder": "^25.1.8",
     "postcss": "^8.5.16",
     "rollup-plugin-visualizer": "^7.0.1",
