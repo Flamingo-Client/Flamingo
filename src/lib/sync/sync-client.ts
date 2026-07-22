@@ -126,13 +126,42 @@ async function apiFetch<T>(
 
 // ====== Public API ======
 
+function isElectron(): boolean {
+  return !!(window as any).electronAPI
+}
+
+function getOsName(): string {
+  const ua = navigator.userAgent
+  if (/Windows/.test(ua)) {
+    const build = ua.match(/Windows NT [\d.]+/)?.[0] || 'Windows'
+    if (build.includes('10.0')) return 'Windows 10/11'
+    if (build.includes('6.3')) return 'Windows 8.1'
+    if (build.includes('6.2')) return 'Windows 8'
+    if (build.includes('6.1')) return 'Windows 7'
+    return 'Windows'
+  }
+  if (/Mac OS X/.test(ua)) {
+    const version = ua.match(/Mac OS X (\d+[_.]\d+[_.]?\d*)/)?.[1]?.replace(/_/g, '.') || ''
+    return version ? `macOS ${version}` : 'macOS'
+  }
+  if (/Linux/.test(ua)) return 'Linux'
+  if (/CrOS/.test(ua)) return 'Chrome OS'
+  return navigator.platform || 'Unknown Device'
+}
+
+function getDeviceInfo(): { device_name: string; device_type: string } {
+  const os = getOsName()
+  if (isElectron()) {
+    return { device_name: os, device_type: 'desktop' }
+  }
+  return { device_name: `${os} (Web)`, device_type: 'browser' }
+}
+
 export async function initSync(): Promise<SyncInitResponse> {
+  const { device_name, device_type } = getDeviceInfo()
   const data = await apiFetch<SyncInitResponse>('/api/sync/init', {
     method: 'POST',
-    body: JSON.stringify({
-      device_name: navigator.platform || 'Unknown Device',
-      device_type: 'desktop',
-    }),
+    body: JSON.stringify({ device_name, device_type }),
   })
   return data.data!
 }
