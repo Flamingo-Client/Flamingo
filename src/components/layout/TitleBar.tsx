@@ -27,7 +27,7 @@ export default function TitleBar() {
         <div className="flex items-center gap-2">
           <span
             aria-hidden="true"
-            className="h-4 w-[10.5px] shrink-0 bg-body"
+            className="h-4 w-[10.5px] shrink-0 bg-accent"
             style={{
               maskImage: 'url(./logo-mark.png)',
               WebkitMaskImage: 'url(./logo-mark.png)',
@@ -70,7 +70,7 @@ export default function TitleBar() {
           <TooltipTrigger asChild>
             <span className="flex h-7 w-7 items-center justify-center">
               {syncStatus === 'connected' && <Cloud className="h-3.5 w-3.5 text-good" />}
-              {syncStatus === 'syncing' && <Loader2 className="h-3.5 w-3.5 animate-spin text-body" />}
+              {syncStatus === 'syncing' && <Loader2 className="h-3.5 w-3.5 animate-spin text-accent" />}
               {syncStatus === 'error' && <CloudOff className="h-3.5 w-3.5 text-bad" />}
               {syncStatus === 'disconnected' && <CloudOff className="h-3.5 w-3.5 text-faint" />}
               {syncStatus === 'connecting' && <Loader2 className="h-3.5 w-3.5 animate-spin text-faint" />}

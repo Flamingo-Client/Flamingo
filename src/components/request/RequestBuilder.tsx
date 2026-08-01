@@ -317,7 +317,7 @@ export default function RequestBuilder() {
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             />
             {request.url.toLowerCase().startsWith('curl ') && (
-              <Code2 className="absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-body" />
+              <Code2 className="absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-accent" />
             )}
           </div>
 

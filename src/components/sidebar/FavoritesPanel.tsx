@@ -28,7 +28,7 @@ export default function FavoritesPanel() {
           className="flex w-full items-center gap-2 rounded-xs px-2 py-1.5 text-[12px] text-muted transition-colors duration-200 hover:bg-surface hover:text-body"
           onClick={() => setActiveTab(tab.id)}
         >
-          <Pin className="h-3 w-3 shrink-0 text-body" />
+          <Pin className="h-3 w-3 shrink-0 text-accent" />
           <FileText className="h-3 w-3 shrink-0 text-faint" />
           <span className="flex-1 truncate text-left">{tab.name}</span>
         </motion.button>

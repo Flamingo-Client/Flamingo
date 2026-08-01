@@ -51,7 +51,7 @@ export default function SyncPanel() {
       {/* Status header */}
       <div className="flex items-center gap-2">
         {syncStatus === 'connected' && <Cloud className="h-4 w-4 text-good" />}
-        {syncStatus === 'syncing' && <Loader2 className="h-4 w-4 animate-spin text-body" />}
+        {syncStatus === 'syncing' && <Loader2 className="h-4 w-4 animate-spin text-accent" />}
         {syncStatus === 'error' && <AlertCircle className="h-4 w-4 text-bad" />}
         {(syncStatus === 'disconnected' || syncStatus === 'connecting') && (
           <CloudOff className="h-4 w-4 text-faint" />

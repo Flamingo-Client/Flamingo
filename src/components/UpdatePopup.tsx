@@ -108,7 +108,7 @@ export default function UpdatePopup() {
             >
               <div className="flex items-start justify-between gap-4 border-b border-line px-4 py-3.5">
                 <div className="flex items-center gap-2.5">
-                  <Download className="h-4 w-4 text-body" />
+                  <Download className="h-4 w-4 text-accent" />
                   <h3 className="text-[14px] font-semibold tracking-[-0.01em]">Update available</h3>
                 </div>
                 <button

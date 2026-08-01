@@ -80,7 +80,7 @@ export default function TabBar() {
               }}
             >
               {tab.isLoading && <Loader2 className="h-3 w-3 shrink-0 animate-spin text-faint" />}
-              {tab.pinned && <Pin className="h-2.5 w-2.5 shrink-0 text-body" />}
+              {tab.pinned && <Pin className="h-2.5 w-2.5 shrink-0 text-accent" />}
               <span className="min-w-[40px] max-w-[140px] truncate text-[11px] font-medium">{tab.name}</span>
               {!tab.pinned && (
                 <span

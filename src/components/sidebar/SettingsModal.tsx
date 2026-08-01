@@ -76,7 +76,7 @@ export default function SettingsModal() {
                       <div className="flex items-center justify-between rounded-sm border border-line bg-surface-sunken px-3 py-2.5">
                         <div className="flex items-center gap-2.5">
                           {syncStatus === 'syncing' ? (
-                            <Loader2 className="h-4 w-4 animate-spin text-body" />
+                            <Loader2 className="h-4 w-4 animate-spin text-accent" />
                           ) : (
                             <Cloud className="h-4 w-4 text-good" />
                           )}
@@ -160,7 +160,7 @@ export default function SettingsModal() {
                       key={t}
                       className={`flex-1 rounded-sm border px-2 py-2 text-[12px] font-medium transition-all duration-200 ease-out-expo ${
                         theme === t
-                          ? 'border-body bg-surface-sunken text-body'
+                          ? 'border-accent bg-accent/[0.08] text-accent'
                           : 'border-line text-muted hover:border-line-strong hover:text-body'
                       }`}
                       onClick={() => setTheme(t)}

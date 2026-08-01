@@ -79,7 +79,7 @@ export default function BodyEditor({ request }: Props) {
         {request.body.type === 'json' && (
           <button
             onClick={handleFormat}
-            className="rounded-xs px-2 py-1 text-[12px] font-medium text-muted transition-colors duration-200 hover:bg-surface-sunken hover:text-body"
+            className="rounded-xs px-2 py-1 text-[12px] font-medium text-accent transition-colors duration-200 hover:bg-accent/[0.08]"
             title="Format JSON (pretty-print)"
           >
             Format

@@ -37,7 +37,7 @@ export default function CollectionsPanel() {
           Group saved requests into collections.
         </p>
         <button
-          className="mt-1 rounded-xs px-2 py-1 text-[12px] font-medium text-body underline-offset-4 transition-colors hover:bg-surface"
+          className="mt-1 rounded-xs px-2 py-1 text-[12px] font-medium text-accent underline-offset-4 transition-colors hover:bg-surface"
           onClick={() => setAdding(true)}
         >
           Create collection
