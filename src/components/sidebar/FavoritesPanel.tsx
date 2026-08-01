@@ -9,10 +9,10 @@ export default function FavoritesPanel() {
 
   if (pinnedTabs.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-2 py-8">
-        <Star className="h-8 w-8 text-muted-foreground/30" />
-        <p className="text-xs text-muted-foreground text-center px-4">
-          Right-click a tab and select "Pin" to see it here
+      <div className="flex flex-col items-center gap-2.5 px-5 py-10">
+        <Star className="h-7 w-7 text-faint/50" />
+        <p className="text-center text-[12px] leading-relaxed text-muted">
+          Right-click a tab and choose “Pin” to keep it here.
         </p>
       </div>
     )
@@ -25,12 +25,12 @@ export default function FavoritesPanel() {
           key={tab.id}
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          className="w-full flex items-center gap-2 px-2 py-1.5 text-xs rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-all"
+          className="flex w-full items-center gap-2 rounded-xs px-2 py-1.5 text-[12px] text-muted transition-colors duration-200 hover:bg-surface hover:text-body"
           onClick={() => setActiveTab(tab.id)}
         >
-          <Pin className="h-3 w-3 shrink-0 text-primary" />
-          <FileText className="h-3 w-3 shrink-0" />
-          <span className="truncate flex-1 text-left">{tab.name}</span>
+          <Pin className="h-3 w-3 shrink-0 text-body" />
+          <FileText className="h-3 w-3 shrink-0 text-faint" />
+          <span className="flex-1 truncate text-left">{tab.name}</span>
         </motion.button>
       ))}
     </div>

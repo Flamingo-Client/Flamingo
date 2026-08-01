@@ -47,16 +47,16 @@ export default function SyncPanel() {
   }
 
   return (
-    <div className="p-3 space-y-4">
+    <div className="space-y-4 p-3">
       {/* Status header */}
       <div className="flex items-center gap-2">
-        {syncStatus === 'connected' && <Cloud className="h-4 w-4 text-emerald-500" />}
-        {syncStatus === 'syncing' && <Loader2 className="h-4 w-4 text-primary animate-spin" />}
-        {syncStatus === 'error' && <AlertCircle className="h-4 w-4 text-destructive" />}
+        {syncStatus === 'connected' && <Cloud className="h-4 w-4 text-good" />}
+        {syncStatus === 'syncing' && <Loader2 className="h-4 w-4 animate-spin text-body" />}
+        {syncStatus === 'error' && <AlertCircle className="h-4 w-4 text-bad" />}
         {(syncStatus === 'disconnected' || syncStatus === 'connecting') && (
-          <CloudOff className="h-4 w-4 text-muted-foreground" />
+          <CloudOff className="h-4 w-4 text-faint" />
         )}
-        <span className="text-xs font-medium">
+        <span className="text-[13px] font-medium text-body">
           {syncStatus === 'connected' && 'Connected'}
           {syncStatus === 'syncing' && 'Syncing...'}
           {syncStatus === 'connecting' && 'Connecting...'}
@@ -67,14 +67,14 @@ export default function SyncPanel() {
 
       {/* Error display */}
       {syncStatus === 'error' && syncError && (
-        <div className="text-xs text-destructive bg-destructive/10 rounded-md px-2.5 py-2">
+        <div className="rounded-sm border border-bad/25 bg-bad/[0.08] px-3 py-2 text-[12px] text-bad">
           {syncError}
         </div>
       )}
 
       {/* Last sync */}
       {isReady && (
-        <div className="text-xs text-muted-foreground">
+        <div className="text-[12px] text-muted">
           Last sync: {formatTime(lastSyncAt)}
         </div>
       )}
@@ -84,7 +84,7 @@ export default function SyncPanel() {
       {/* Not connected: show connect */}
       {!isReady && (
         <div className="space-y-2">
-          <div className="text-xs text-muted-foreground">
+          <div className="text-[12px] leading-relaxed text-muted">
             Connect to Flamingo Sync to back up and restore your data across devices.
           </div>
           <Button
@@ -94,9 +94,9 @@ export default function SyncPanel() {
             className="w-full"
           >
             {connectLoading || syncStatus === 'connecting' ? (
-              <Loader2 className="h-3 w-3 animate-spin mr-1" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
             ) : (
-              <Link2 className="h-3 w-3 mr-1" />
+              <Link2 className="h-3.5 w-3.5" />
             )}
             Connect
           </Button>
@@ -109,7 +109,7 @@ export default function SyncPanel() {
           {/* Synced data summary */}
           {syncConfig && (
             <div className="space-y-1.5">
-              <div className="text-xs font-medium text-foreground">Syncing</div>
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-faint">Syncing</div>
               <div className="space-y-1">
                 <SyncRow label="History" active={syncConfig.sync_history} />
                 <SyncRow label="Environments" active={syncConfig.sync_environments} />
@@ -124,14 +124,14 @@ export default function SyncPanel() {
             <Button
               variant="outline"
               size="sm"
-              className="flex-1 text-xs"
+              className="flex-1"
               onClick={() => syncNow()}
               disabled={syncStatus === 'syncing'}
             >
               {syncStatus === 'syncing' ? (
-                <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
-                <RefreshCw className="h-3 w-3 mr-1" />
+                <RefreshCw className="h-3.5 w-3.5" />
               )}
               Sync Now
             </Button>
@@ -139,9 +139,9 @@ export default function SyncPanel() {
               variant="ghost"
               size="sm"
               onClick={disconnect}
-              className="text-xs text-destructive hover:text-destructive"
+              className="text-bad hover:bg-bad/[0.08] hover:text-bad"
             >
-              <Unlink className="h-3 w-3 mr-1" />
+              <Unlink className="h-3.5 w-3.5" />
               Disconnect
             </Button>
           </div>
@@ -154,11 +154,11 @@ export default function SyncPanel() {
 function SyncRow({ label, active }: { label: string; active: boolean }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className="text-[12px] text-muted">{label}</span>
       {active ? (
-        <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+        <CheckCircle2 className="h-3.5 w-3.5 text-good" />
       ) : (
-        <span className="text-xs text-muted-foreground">off</span>
+        <span className="text-[11px] text-faint">Off</span>
       )}
     </div>
   )
