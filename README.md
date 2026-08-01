@@ -1,231 +1,165 @@
-# Flamingo
+<div align="center">
+  <img src="./assets/readme/logo.png" alt="Flamingo" width="110">
+  <h1>Flamingo</h1>
+  <p><b>A modern, high-performance desktop API client.</b></p>
+  <p>Craft HTTP requests, manage environments and collections, and sync across devices with end-to-end encryption.</p>
+  <sub>Electron · React · TypeScript · MIT licensed</sub>
+</div>
 
-**A modern, high-performance desktop API client** built with Electron, React, and TypeScript. Flamingo provides a powerful interface for crafting HTTP requests, managing environments and collections, and syncing your data across devices — all with end-to-end encryption.
-
-<img src="/assets/readme/image.png" alt="Flamingo screenshot">
----
+<img src="./assets/readme/image.png" alt="Flamingo screenshot">
 
 ## Features
 
-- **HTTP Request Builder** — Full-featured editor for GET, POST, PUT, PATCH, DELETE, HEAD, and OPTIONS requests with support for headers, query parameters, body (JSON, form-data, text), and authentication (Basic Auth, Bearer Token, API Key)
-- **Monaco Editor Integration** — Code-grade editing for request/response bodies with syntax highlighting, autocompletion, and theming
-- **Environment Variables** — Define reusable variables across environments (development, staging, production) with dynamic resolution in requests
-- **Collections** — Organize requests into folders for project-level grouping and reuse
-- **Request History** — Automatic saving of recent requests with search and filtering
-- **Multi-Tab Interface** — Work on multiple requests simultaneously with resizable panels
-- **Sync Across Devices** — Cloud sync with end-to-end encryption (AES-256-GCM) via the Flamingo Sync Server
-- **Theme Support** — Light, dark, and system-following themes
-- **Keyboard Shortcuts** — Power-user shortcuts for every action
-- **Auto-Save** — Never lose your work with automatic state persistence
-- **Responsive Layout** — Resizable panes, collapsible sidebar, and tab management
+**Requests**
+- Full request builder for `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD` and `OPTIONS`
+- Headers, query params and bodies (JSON, XML, text, form-data, URL-encoded)
+- Auth presets: Basic, Bearer token and API key
+- Paste a `curl` command straight into the URL bar and it becomes a request
+- Pre-request and post-response scripts with a captured `console` output panel
 
----
+**Responses**
+- Pretty, raw, preview, JSON tree and headers views
+- Status, latency and payload size at a glance
+- Side-by-side diff of two responses from different tabs
+- Copy or download the body in one click
 
-## Tech Stack
+**Workspace**
+- Multi-tab editing with pinning, duplication and middle-click to close
+- Command palette on `Ctrl+K`
+- Collections for grouping saved requests, plus searchable request history
+- Environment variables resolved as `{{variable}}` in URLs, headers and bodies
+- Light, dark and system themes, applied to the Monaco editor as well
 
-| Layer | Technology |
-|-------|-----------|
-| Desktop Shell | Electron 32 |
-| UI Framework | React 18 |
-| Build Tool | Vite 5 |
-| Language | TypeScript 5 |
-| Styling | TailwindCSS 3 |
-| Components | Radix UI (20+ primitives) |
-| State Management | Zustand 5 |
-| Editor | Monaco Editor (VS Code engine) |
-| Animations | Framer Motion 11 |
-| Icons | Lucide React |
-| HTTP Client | Fetch API |
-| Encryption | Web Crypto API (AES-256-GCM) |
+**Sync**
+- Optional cloud sync with AES-256-GCM end-to-end encryption
+- Per-category opt-in: history, environments, collections, secrets, settings
 
----
+## Getting started
 
-## Architecture
-
-```
-client/
-├── electron/              # Electron main process
-│   ├── main.js            # App window, IPC handlers
-│   └── preload.js         # Context bridge (secure IPC)
-├── src/
-│   ├── components/        # React components
-│   │   ├── layout/        # App shell (TitleBar, Sidebar, Panels)
-│   │   ├── request/       # Request builder (URL, headers, body, auth)
-│   │   ├── response/      # Response viewer (body, headers, status)
-│   │   ├── sidebar/       # Sidebar panels (SyncPanel, SettingsModal)
-│   │   └── ui/            # Primitives (Button, Input, Dialog, etc.)
-│   ├── hooks/             # Custom React hooks
-│   ├── lib/
-│   │   ├── sync/          # Sync client (crypto, store, provider)
-│   │   └── supabase/      # Supabase client configs
-│   ├── main/              # App entry point
-│   ├── modules/           # Feature modules
-│   ├── stores/            # Zustand stores
-│   │   ├── history-store.ts
-│   │   ├── environment-store.ts
-│   │   ├── collection-store.ts
-│   │   ├── settings-store.ts
-│   │   ├── tab-store.ts
-│   │   ├── theme-store.ts
-│   │   └── ui-store.ts
-│   └── styles/            # Global CSS, Tailwind layers
-└── # Build & config files
-```
-
-### State Management
-
-Flamingo uses **Zustand** with the `persist` middleware for all application state. Each domain has its own store:
-
-| Store | Purpose | Persisted |
-|-------|---------|-----------|
-| `history-store` | Request history entries | Yes |
-| `environment-store` | Environment variables | Yes |
-| `collection-store` | Request collections | Yes |
-| `settings-store` | App preferences (font size, timeout, etc.) | Yes |
-| `tab-store` | Open tabs and active tab | Yes |
-| `theme-store` | Theme preference | Yes |
-| `ui-store` | UI state (modal open, panel width) | No |
-
-### Sync System
-
-Flamingo integrates with the Flamingo Sync Server for cross-device data synchronization:
-
-1. **End-to-End Encryption** — All data is encrypted with AES-256-GCM before leaving the client
-2. **Master Key** — A random 256-bit key is generated per user, stored raw (base64) on the server
-3. **Automatic Setup** — On first connection, the master key is generated, uploaded, and cached locally
-4. **Multi-Device** — Subsequent devices fetch the shared master key from the server
-5. **Selective Sync** — Users choose which data types to sync (history, environments, collections, settings)
-6. **Token Auth** — Device-authorization flow with temporary tokens and browser-based claim
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- **Node.js** >= 18
-- **npm** >= 9
-
-### Installation
+Requires **Node.js 18+** and **pnpm** (the repo ships a `pnpm-lock.yaml` and a `pnpm-workspace.yaml`).
 
 ```bash
-cd client
-npm install
+pnpm install
+pnpm electron:dev     # Vite + Electron together, with hot reload
+pnpm react:dev        # Vite dev server only, on http://localhost:5173
 ```
 
-### Development
-
-Run the Vite dev server and Electron concurrently:
-
-```bash
-npm run dev              # Vite dev server only (http://localhost:5173)
-npm run electron:dev     # Vite + Electron (hot reload)
-```
+To attach Electron to a dev server you already have running, use `electron . --dev`.
 
 ### Build
 
 ```bash
-npm run build            # TypeScript check + Vite production build
-npm run electron:build   # Build + package for current platform
-npm run electron:mac     # Build + package for macOS (DMG + ZIP)
-npm run electron:win     # Build + package for Windows (NSIS)
-npm run electron:linux   # Build + package for Linux (AppImage, deb, rpm)
+pnpm react:build      # Type-check, then produce the Vite bundle in dist/
+pnpm build            # Full build, then package for Windows + Linux
+pnpm electron:build   # Full build, then package for the current platform
 ```
 
-> **macOS note:** Building for macOS requires Xcode, an Apple Developer account, and proper code signing certificates. For notarization, see the [macOS Build & Notarization guide](../docs-site/src/content/docs/building/macos.md) in the documentation site.
+`electron:win`, `electron:linux` and `electron:mac` package an **existing** `dist/` for a single target, so run `react:build` first if the bundle is stale. Packaging for macOS needs Xcode, an Apple Developer account and valid signing certificates.
 
-### Lint
+### Scripts
 
-```bash
-npm run lint             # TypeScript type-check (no emit)
+| Script | What it does |
+|--------|--------------|
+| `react:dev` | Vite dev server on port 5173 |
+| `react:build` | `tsc` type-check + Vite production bundle |
+| `electron:dev` | Bundle, then run Vite and Electron concurrently |
+| `electron:build` | `react:build` + package for the current platform |
+| `electron:win` | Package an existing `dist/` as an NSIS installer |
+| `electron:linux` | Package an existing `dist/` as AppImage + deb |
+| `electron:mac` | Package an existing `dist/` as DMG + ZIP |
+| `build` | `react:build` + package for Windows and Linux |
+| `preview` | Serve the production bundle in a browser |
+| `lint` | `tsc --noEmit` |
+
+## Architecture
+
+```
+.
+├── electron/
+│   ├── main.js              # BrowserWindow, IPC handlers, window controls
+│   └── preload.js           # contextBridge — the only surface exposed to the renderer
+├── public/                  # Static assets copied verbatim (fonts, logo)
+└── src/
+    ├── components/
+    │   ├── layout/          # TitleBar
+    │   ├── request/         # RequestBuilder, BodyEditor, KeyValueEditor
+    │   ├── response/        # ResponseViewer, ResponseCompare
+    │   ├── sidebar/         # Sidebar + History/Collections/Environments/Favorites/Sync panels
+    │   ├── ui/              # Primitives: Button, Input, Select, Modal, Tabs…
+    │   └── workspace/       # TabBar, CommandPalette
+    ├── lib/
+    │   ├── sync/            # Sync client, crypto, store, provider
+    │   ├── curl-parser.ts   # curl → request
+    │   ├── monaco-setup.ts  # Editor themes matching the app surfaces
+    │   ├── script-runner.ts # Pre/post request scripts
+    │   └── utils.ts
+    ├── main/                # App entry point and root component
+    ├── stores/              # Zustand stores
+    └── styles/              # Design tokens and global CSS
 ```
 
----
+### State
 
-## Available Scripts
+Every domain gets its own Zustand store, most behind the `persist` middleware:
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start Vite dev server (port 5173) |
-| `npm run build` | TypeScript check + Vite production build |
-| `npm run electron:dev` | Run Vite + Electron concurrently with hot reload |
-| `npm run electron:build` | Build and package for current platform |
-| `npm run electron:mac` | Build and package for macOS (DMG + ZIP) |
-| `npm run electron:win` | Build and package for Windows (NSIS) |
-| `npm run electron:linux` | Build and package for Linux (AppImage, deb, rpm) |
-| `npm run electron:all` | Build and package for Windows + Linux |
-| `npm run preview` | Preview Vite production build |
-| `npm run lint` | TypeScript type-check (`tsc --noEmit`) |
+| Store | Holds | Persisted |
+|-------|-------|-----------|
+| `tab-store` | Open tabs, active tab, request drafts, responses | Yes |
+| `history-store` | Past requests | Yes |
+| `collection-store` | Collections and folder state | Yes |
+| `environment-store` | Environments and their variables | Yes |
+| `settings-store` | Font size, timeout, behaviour toggles | Yes |
+| `theme-store` | Theme preference | Yes |
+| `ui-store` | Sidebar collapse, modal visibility | No |
 
----
+### Sync
 
-## Project Configuration
+Flamingo talks to the Flamingo Sync Server, and the server never sees plaintext:
 
-### Vite (`vite.config.ts`)
+1. A random 256-bit master key is generated on the client at first connection
+2. Everything is encrypted with AES-256-GCM via the Web Crypto API before upload
+3. Extra devices fetch the shared master key through a device-authorization flow
+4. Each category syncs only if you enable it
 
-- React plugin with Fast Refresh
-- Path alias `@/` → `./src/`
-- Monaco Editor worker bundling
-- Dev server on port 5173
+### Design system
 
-### TypeScript (`tsconfig.json`)
+The interface runs on CSS custom properties, exposed to Tailwind as RGB channels so opacity modifiers keep working. Both themes live in `src/styles/globals.css`; no component hardcodes a colour.
 
-- Target: ES2020
-- Module: ESNext with bundler resolution
-- JSX: react-jsx
-- Strict mode enabled
-- Path alias `@/*` → `./src/*`
+| Token | Role |
+|-------|------|
+| `canvas` | Window background, behind everything |
+| `surface` / `surface-raised` / `surface-sunken` | Panels, popovers, insets |
+| `line` / `line-strong` | Borders and dividers |
+| `body` / `muted` / `faint` | Text hierarchy |
+| `accent` / `accent-foreground` | Primary actions — ink on light, white on dark |
+| `good` / `warn` / `bad` | Status feedback |
+| `method-*` | Per-HTTP-method colours, colour-blind safe |
 
-### Electron (`electron/main.js`)
-
-- Main process creates BrowserWindow
-- IPC handlers for native dialogs and `openExternal`
-- Preload script exposes secure API via contextBridge
-
----
-
-## Dependencies
-
-### Production
-
-| Package | Purpose |
-|---------|---------|
-| `@monaco-editor/react` | Code editor component |
-| `@radix-ui/*` | Accessible UI primitives (20 packages) |
-| `@tanstack/react-query` | Async state management |
-| `framer-motion` | Declarative animations |
-| `lucide-react` | Icon library |
-| `monaco-editor` | VS Code editor engine |
-| `react-resizable-panels` | Split-pane layout |
-| `zustand` | Lightweight state management |
-| `tailwind-merge` | Conditional class merging |
-
-### Development
-
-| Package | Purpose |
-|---------|---------|
-| `electron` | Desktop shell |
-| `electron-builder` | App packaging & distribution |
-| `vite` | Build tool & dev server |
-| `typescript` | Type checking |
-| `tailwindcss` | Utility-first CSS |
-
----
-
-## Keyboard Shortcuts
+## Keyboard shortcuts
 
 | Shortcut | Action |
 |----------|--------|
-| `Ctrl+Enter` | Send request |
-| `Ctrl+N` | New tab |
-| `Ctrl+W` | Close tab |
-| `Ctrl+Shift+T` | Reopen closed tab |
-| `Ctrl+,` | Open settings |
+| `Ctrl+Enter` | Send the current request |
+| `Ctrl+K` | Open the command palette |
+| `Ctrl+T` | New tab |
+| `Ctrl+B` | Toggle the sidebar |
 
----
+## Tech stack
+
+| Layer | Technology |
+|-------|-----------|
+| Desktop shell | Electron 43 |
+| UI | React 18 |
+| Build | Vite 5 |
+| Language | TypeScript 5 |
+| Styling | Tailwind CSS 3 |
+| Components | Radix UI primitives |
+| State | Zustand 5 |
+| Editor | Monaco (the VS Code engine) |
+| Animation | Framer Motion 11 |
+| Icons | Lucide |
+| Encryption | Web Crypto API (AES-256-GCM) |
 
 ## License
 
-MIT License — see [LICENSE](./LICENSE)
-
-Copyright (c) 2024 Javier Fernández (Jallox/Jayox)
+MIT — see [LICENSE](./LICENSE). Copyright © 2024 Javier Fernández (Jallox/Jayox)
