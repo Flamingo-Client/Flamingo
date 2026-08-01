@@ -3,6 +3,10 @@ const path = require('path')
 
 let mainWindow
 
+const APP_ICON = process.platform === 'win32'
+  ? path.join(__dirname, '..', 'assets', 'icon.ico')
+  : path.join(__dirname, '..', 'assets', 'icons', '512x512.png')
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1400,
@@ -11,7 +15,8 @@ function createWindow() {
     minHeight: 600,
     frame: false,
     titleBarStyle: 'hidden',
-    backgroundColor: '#0f0f13',
+    icon: APP_ICON,
+    backgroundColor: '#070707',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
