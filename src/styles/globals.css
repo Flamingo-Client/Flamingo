@@ -29,7 +29,7 @@
     --body: 10 10 10;
     --muted: 92 92 92;
     --faint: 148 148 148;
-    --accent: 10 10 10;
+    --accent: 60 131 246;
     --accent-foreground: 255 255 255;
 
     --good: 27 127 75;
@@ -59,8 +59,8 @@
     --body: 242 242 242;
     --muted: 162 162 162;
     --faint: 109 109 109;
-    --accent: 255 255 255;
-    --accent-foreground: 10 10 10;
+    --accent: 60 131 246;
+    --accent-foreground: 255 255 255;
 
     --good: 53 160 106;
     --warn: 208 138 30;
