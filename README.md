@@ -4,9 +4,9 @@
   <p><b>A modern, high-performance desktop API client.</b></p>
   <p>Craft HTTP requests, manage environments and collections, and sync across devices with end-to-end encryption.</p>
   <sub>Electron · React · TypeScript · MIT licensed</sub>
+  <br><br><br>
+  <img src="./assets/readme/image.png" alt="Flamingo screenshot">
 </div>
-
-<img src="./assets/readme/image.png" alt="Flamingo screenshot">
 
 ## Features
 
