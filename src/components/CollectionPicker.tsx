@@ -20,7 +20,7 @@ export default function CollectionPicker({ requestId, onDone }: { requestId: str
   }
 
   return (
-    <div className="space-y-1 max-h-48 overflow-y-auto">
+    <div className="scrollbar-thin max-h-56 space-y-1 overflow-y-auto">
       {adding ? (
         <div className="flex items-center gap-1 p-1">
           <input
@@ -32,14 +32,14 @@ export default function CollectionPicker({ requestId, onDone }: { requestId: str
               if (e.key === 'Escape') { setAdding(false); setNewName('') }
             }}
             placeholder="Collection name..."
-            className="flex-1 h-7 text-xs bg-muted/30 border border-border rounded px-1.5 outline-none focus:border-ring"
+            className="h-8 flex-1 rounded-sm border border-line-strong bg-surface px-2.5 text-[12px] outline-none transition-colors focus:border-body"
           />
-          <Button size="sm" className="h-7 text-xs" onClick={handleCreate}>Create</Button>
+          <Button size="sm" className="h-8" onClick={handleCreate}>Create</Button>
         </div>
       ) : (
         <>
           {collections.length === 0 ? (
-            <p className="text-xs text-muted-foreground text-center py-4">
+            <p className="py-6 text-center text-[12px] text-muted">
               No collections yet.
             </p>
           ) : (
@@ -47,21 +47,21 @@ export default function CollectionPicker({ requestId, onDone }: { requestId: str
               {collections.map((c) => (
                 <button
                   key={c.id}
-                  className="w-full flex items-center gap-2 px-2 py-1.5 text-xs rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-all"
+                  className="flex w-full items-center gap-2.5 rounded-xs px-2.5 py-2 text-[13px] text-body transition-colors duration-200 hover:bg-surface-sunken"
                   onClick={() => { addRequestToCollection(c.id, requestId); onDone() }}
                 >
-                  <Folder className="h-3.5 w-3.5 shrink-0" />
+                  <Folder className="h-3.5 w-3.5 shrink-0 text-faint" />
                   <span className="truncate">{c.name}</span>
                 </button>
               ))}
             </div>
           )}
           <button
-            className="w-full flex items-center gap-1.5 px-2 py-1 text-xs text-muted-foreground hover:text-foreground rounded-md hover:bg-accent/50 transition-all mt-1"
+            className="mt-1 flex w-full items-center gap-2.5 rounded-xs px-2.5 py-2 text-[13px] text-muted transition-colors duration-200 hover:bg-surface-sunken hover:text-body"
             onClick={() => setAdding(true)}
           >
-            <FolderPlus className="h-3 w-3" />
-            New Collection
+            <FolderPlus className="h-3.5 w-3.5" />
+            New collection
           </button>
         </>
       )}
