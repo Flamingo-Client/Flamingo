@@ -1,41 +1,49 @@
 import { FlaskConical, Minus, Square, X, Cloud, CloudOff, Loader2, Moon, Laptop, Sun } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useThemeStore } from '@/stores/theme-store'
-import { useSettingsStore } from '@/stores/settings-store'
-import { useTabStore } from '@/stores/tab-store'
 import { useEnvironmentStore } from '@/stores/environment-store'
 import { useSyncStore } from '@/lib/sync/sync-store'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export default function TitleBar() {
   const { theme, setTheme } = useThemeStore()
-  const settings = useSettingsStore((s) => s.settings)
-  const updateSettings = useSettingsStore((s) => s.updateSettings)
   const environments = useEnvironmentStore((s) => s.environments)
   const setActiveEnvironment = useEnvironmentStore((s) => s.setActiveEnvironment)
   const activeEnv = environments.find((e) => e.isActive)
   const syncStatus = useSyncStore((s) => s.status)
   const syncError = useSyncStore((s) => s.error)
 
+  const syncLabel =
+    syncStatus === 'connected' ? 'Sync connected' :
+    syncStatus === 'syncing' ? 'Syncing…' :
+    syncStatus === 'connecting' ? 'Connecting…' :
+    syncStatus === 'error' ? `Sync error: ${syncError || 'Unknown'}` :
+    'Sync disconnected'
+
   return (
-    <header className="h-10 flex items-center bg-titlebar-bg border-b border-titlebar-border shrink-0 px-2 app-region-drag">
-      <div className="flex items-center gap-2 flex-1 min-w-0 app-region-drag">
-        <FlaskConical className="h-4 w-4 text-primary shrink-0" />
-        <span className="text-sm font-semibold text-foreground">Flamingo</span>
-        <span className="text-[10px] text-muted-foreground/50 font-medium">v{__APP_VERSION__}</span>
+    <header className="flex h-11 shrink-0 items-center gap-2 px-2.5 app-region-drag">
+      <div className="flex min-w-0 flex-1 items-center gap-2.5">
+        <div className="flex items-center gap-2">
+          <FlaskConical className="h-4 w-4 shrink-0 text-body" />
+          <span className="text-[13px] font-semibold tracking-[-0.01em] text-body">Flamingo</span>
+          <span className="font-mono text-[10px] text-faint">v{__APP_VERSION__}</span>
+        </div>
+
+        <span className="h-4 w-px bg-line" />
 
         <Select
           value={activeEnv?.id || 'global'}
           onValueChange={(v) => setActiveEnvironment(v)}
         >
-          <SelectTrigger className="h-6 text-xs w-auto min-w-[100px] border-0 bg-muted/50 hover:bg-muted px-2 app-region-no-drag">
+          <SelectTrigger className="app-region-no-drag h-7 w-auto min-w-[120px] rounded-full border-line bg-surface px-3 text-[12px] text-muted hover:text-body">
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="app-region-no-drag">
             {environments.map((env) => (
               <SelectItem key={env.id} value={env.id}>
-                <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: env.color }} />
+                <span className="flex items-center gap-2 text-[12px]">
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: env.color }} />
                   {env.name}
                 </span>
               </SelectItem>
@@ -44,38 +52,47 @@ export default function TitleBar() {
         </Select>
       </div>
 
-      <div className="flex items-center gap-1 app-region-no-drag">
-        <div className="flex items-center gap-1 px-1.5 py-0.5 rounded text-xs mr-1" title={
-          syncStatus === 'connected' ? 'Sync connected' :
-          syncStatus === 'syncing' ? 'Syncing...' :
-          syncStatus === 'error' ? `Sync error: ${syncError || 'Unknown'}` :
-          'Sync disconnected'
-        }>
-          {syncStatus === 'connected' && <Cloud className="h-4 w-4 text-emerald-500" />}
-          {syncStatus === 'syncing' && <Loader2 className="h-4 w-4 text-primary animate-spin" />}
-          {syncStatus === 'error' && <CloudOff className="h-4 w-4 text-destructive" />}
-          {syncStatus === 'disconnected' && <CloudOff className="h-4 w-4 text-muted-foreground" />}
-          {syncStatus === 'connecting' && <Loader2 className="h-4 w-4 text-muted-foreground animate-spin" />}
-        </div>
+      <div className="app-region-no-drag flex items-center gap-0.5">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="flex h-7 w-7 items-center justify-center">
+              {syncStatus === 'connected' && <Cloud className="h-3.5 w-3.5 text-good" />}
+              {syncStatus === 'syncing' && <Loader2 className="h-3.5 w-3.5 animate-spin text-body" />}
+              {syncStatus === 'error' && <CloudOff className="h-3.5 w-3.5 text-bad" />}
+              {syncStatus === 'disconnected' && <CloudOff className="h-3.5 w-3.5 text-faint" />}
+              {syncStatus === 'connecting' && <Loader2 className="h-3.5 w-3.5 animate-spin text-faint" />}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">{syncLabel}</TooltipContent>
+        </Tooltip>
 
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={() => setTheme(theme === 'dark' ? 'light' : theme === 'light' ? 'system' : 'dark')}
-          className="text-muted-foreground"
-        >
-          {theme === 'dark' ? <Moon className='h-4 w-4'/> : theme === 'light' ? <Sun className='h-4 w-4'/> : <Laptop className='h-4 w-4'/>}
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : theme === 'light' ? 'system' : 'dark')}
+            >
+              {theme === 'dark' ? <Moon className="h-3.5 w-3.5" /> : theme === 'light' ? <Sun className="h-3.5 w-3.5" /> : <Laptop className="h-3.5 w-3.5" />}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Theme: {theme}</TooltipContent>
+        </Tooltip>
       </div>
 
-      <div className="flex items-center ml-2 app-region-no-drag">
-        <Button variant="ghost" size="icon-sm" onClick={() => window.electronAPI?.minimize()} className="text-muted-foreground hover:text-foreground">
+      <div className="app-region-no-drag ml-1 flex items-center gap-0.5">
+        <Button variant="ghost" size="icon" onClick={() => window.electronAPI?.minimize()}>
           <Minus className="h-3.5 w-3.5" />
         </Button>
-        <Button variant="ghost" size="icon-sm" onClick={() => window.electronAPI?.maximize()} className="text-muted-foreground hover:text-foreground">
-          <Square className="h-3.5 w-3.5" />
+        <Button variant="ghost" size="icon" onClick={() => window.electronAPI?.maximize()}>
+          <Square className="h-3 w-3" />
         </Button>
-        <Button variant="ghost" size="icon-sm" onClick={() => window.electronAPI?.close()} className="text-muted-foreground hover:text-destructive">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => window.electronAPI?.close()}
+          className="hover:bg-bad hover:text-white"
+        >
           <X className="h-3.5 w-3.5" />
         </Button>
       </div>
