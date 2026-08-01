@@ -20,76 +20,82 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 217 91% 60%;
-    --radius: 0.5rem;
+    --canvas: 241 241 241;
+    --surface: 255 255 255;
+    --surface-raised: 255 255 255;
+    --surface-sunken: 245 245 245;
+    --line: 236 236 236;
+    --line-strong: 220 220 220;
+    --body: 10 10 10;
+    --muted: 92 92 92;
+    --faint: 148 148 148;
+    --accent: 10 10 10;
+    --accent-foreground: 255 255 255;
 
-    --sidebar-bg: 240 10% 96%;
-    --sidebar-foreground: 240 5% 26%;
-    --sidebar-muted: 240 5% 84%;
-    --sidebar-border: 240 5% 88%;
+    --good: 27 127 75;
+    --warn: 178 106 0;
+    --bad: 180 35 24;
+    --idle: 140 140 140;
 
-    --titlebar-bg: 240 10% 98%;
-    --titlebar-border: 240 5% 90%;
+    --method-get: 0 158 115;
+    --method-post: 0 114 178;
+    --method-put: 230 159 0;
+    --method-patch: 204 121 167;
+    --method-delete: 180 35 24;
+    --method-neutral: 140 140 140;
+
+    --panel-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 32px -12px rgb(0 0 0 / 0.1);
+
+    color-scheme: light;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 5.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 5.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 217 91% 60%;
+    --canvas: 7 7 7;
+    --surface: 15 15 15;
+    --surface-raised: 22 22 22;
+    --surface-sunken: 27 27 27;
+    --line: 35 35 35;
+    --line-strong: 52 52 52;
+    --body: 242 242 242;
+    --muted: 162 162 162;
+    --faint: 109 109 109;
+    --accent: 255 255 255;
+    --accent-foreground: 10 10 10;
 
-    --sidebar-bg: 240 10% 5.9%;
-    --sidebar-foreground: 240 5% 64.9%;
-    --sidebar-muted: 240 5% 26%;
-    --sidebar-border: 240 5% 12%;
+    --good: 53 160 106;
+    --warn: 208 138 30;
+    --bad: 224 96 85;
+    --idle: 140 140 140;
 
-    --titlebar-bg: 240 10% 5.9%;
-    --titlebar-border: 240 5% 12%;
+    --method-get: 53 160 106;
+    --method-post: 74 159 216;
+    --method-put: 208 138 30;
+    --method-patch: 204 121 167;
+    --method-delete: 224 96 85;
+    --method-neutral: 140 140 140;
+
+    --panel-shadow: 0 1px 2px rgb(0 0 0 / 0.5), 0 16px 40px -16px rgb(0 0 0 / 0.7);
+
+    color-scheme: dark;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: rgb(var(--line));
+  }
+
+  html,
+  body {
+    height: 100%;
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-canvas text-body;
     font-family: 'Onest', system-ui, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
     user-select: none;
   }
 
@@ -97,9 +103,14 @@
     font-family: 'GoogleSansCode', 'Cascadia Code', 'Consolas', monospace;
   }
 
+  ::selection {
+    background: rgb(var(--body));
+    color: rgb(var(--surface));
+  }
+
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 9px;
+    height: 9px;
   }
 
   ::-webkit-scrollbar-track {
@@ -107,11 +118,24 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-muted-foreground/20 rounded-full;
+    @apply rounded-full bg-line-strong;
+    border: 2.5px solid transparent;
+    background-clip: content-box;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/30;
+    @apply bg-faint/70;
+    background-clip: content-box;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
@@ -124,12 +148,14 @@
     -webkit-app-region: no-drag;
   }
 
-  .glass {
-    @apply bg-background/80 backdrop-blur-xl;
+  .panel {
+    @apply bg-surface;
+    box-shadow: var(--panel-shadow);
   }
 
-  .glass-sm {
-    @apply bg-background/60 backdrop-blur-lg;
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--line-strong)) transparent;
   }
 
   .text-balance {
