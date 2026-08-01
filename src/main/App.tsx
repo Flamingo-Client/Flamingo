@@ -59,24 +59,26 @@ export default function App() {
   }, [])
 
   return (
-    <TooltipProvider delayDuration={300}>
+    <TooltipProvider delayDuration={220} skipDelayDuration={300}>
       <SyncProvider>
-        <div className="h-screen flex flex-col overflow-hidden bg-background">
+        <div className="h-screen flex flex-col overflow-hidden bg-canvas">
           <TitleBar />
-          <div className="flex flex-1 overflow-hidden">
+          <div className="flex flex-1 overflow-hidden min-h-0">
             <Sidebar />
-            <main className="flex-1 flex flex-col overflow-hidden min-w-0">
-              <TabBar />
-              <div className="flex-1 flex overflow-hidden">
-                <div className="flex-1 flex flex-col min-w-0">
-                  <RequestBuilder />
+            <div className="flex flex-1 min-w-0 flex-col pr-2 pb-2">
+              <main className="panel flex flex-1 min-h-0 min-w-0 flex-col overflow-hidden rounded-lg border border-line">
+                <TabBar />
+                <div className="flex-1 flex overflow-hidden min-h-0">
+                  <div className="flex-1 flex flex-col min-w-0">
+                    <RequestBuilder />
+                  </div>
+                  {activeTabId && (
+                    <div className="w-px bg-line" />
+                  )}
+                  <ResponseViewer />
                 </div>
-                {activeTabId && (
-                  <div className="w-px bg-border" />
-                )}
-                <ResponseViewer />
-              </div>
-            </main>
+              </main>
+            </div>
           </div>
           <CommandPalette />
           <UpdatePopup />
