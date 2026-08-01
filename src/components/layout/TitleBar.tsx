@@ -1,4 +1,4 @@
-import { FlaskConical, Minus, Square, X, Cloud, CloudOff, Loader2, Moon, Laptop, Sun } from 'lucide-react'
+import { Minus, Square, X, Cloud, CloudOff, Loader2, Moon, Laptop, Sun } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useThemeStore } from '@/stores/theme-store'
@@ -25,7 +25,7 @@ export default function TitleBar() {
     <header className="flex h-11 shrink-0 items-center gap-2 px-2.5 app-region-drag">
       <div className="flex min-w-0 flex-1 items-center gap-2.5">
         <div className="flex items-center gap-2">
-          <FlaskConical className="h-4 w-4 shrink-0 text-body" />
+          <img src="./logo.png" alt="" aria-hidden="true" draggable={false} className="h-4 w-4 shrink-0 select-none rounded-[4px]" />
           <span className="text-[13px] font-semibold tracking-[-0.01em] text-body">Flamingo</span>
           <span className="font-mono text-[10px] text-faint">v{__APP_VERSION__}</span>
         </div>
