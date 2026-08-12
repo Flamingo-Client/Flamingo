@@ -31,16 +31,16 @@ export default function CollectionsPanel() {
 
   if (collections.length === 0 && !adding) {
     return (
-      <div className="flex flex-col items-center gap-2 py-8">
-        <Folder className="h-8 w-8 text-muted-foreground/30" />
-        <p className="text-xs text-muted-foreground text-center px-4">
-          Save requests to collections to organize them
+      <div className="flex flex-col items-center gap-2.5 px-5 py-10">
+        <Folder className="h-7 w-7 text-faint/50" />
+        <p className="text-center text-[12px] leading-relaxed text-muted">
+          Group saved requests into collections.
         </p>
         <button
-          className="text-xs text-primary hover:underline mt-1"
+          className="mt-1 rounded-xs px-2 py-1 text-[12px] font-medium text-accent underline-offset-4 transition-colors hover:bg-surface"
           onClick={() => setAdding(true)}
         >
-          Create Collection
+          Create collection
         </button>
       </div>
     )
@@ -60,7 +60,7 @@ export default function CollectionsPanel() {
             }}
             onBlur={() => { if (!newName.trim()) setAdding(false) }}
             placeholder="Collection name..."
-            className="flex-1 h-6 text-xs bg-muted/30 border border-border rounded px-1.5 outline-none focus:border-ring"
+            className="h-7 flex-1 rounded-xs border border-line-strong bg-surface px-2 text-[12px] outline-none transition-colors focus:border-body"
           />
         </div>
       )}
@@ -79,7 +79,7 @@ export default function CollectionsPanel() {
       ))}
       {!adding && (
         <button
-          className="w-full flex items-center gap-1.5 px-2 py-1 text-xs text-muted-foreground hover:text-foreground rounded-md hover:bg-accent/50 transition-all"
+          className="flex w-full items-center gap-2 rounded-xs px-2 py-1.5 text-[12px] text-muted transition-colors duration-200 hover:bg-surface hover:text-body"
           onClick={() => setAdding(true)}
         >
           <Plus className="h-3 w-3" />
@@ -128,8 +128,8 @@ function CollectionItem({
   return (
     <div>
       <div
-        className={`group flex items-center gap-1.5 px-2 py-1 text-xs rounded-md cursor-pointer transition-all
-          ${selectedCollectionId === collection.id ? 'bg-accent text-foreground' : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'}`}
+        className={`group flex cursor-pointer items-center gap-1.5 rounded-xs px-2 py-1.5 text-[12px] transition-colors duration-200
+          ${selectedCollectionId === collection.id ? 'bg-surface text-body shadow-[0_1px_2px_rgb(0_0_0/0.04)]' : 'text-muted hover:bg-surface hover:text-body'}`}
         onClick={() => {
           setSelectedCollection(collection.id)
           if (hasChildren) toggleFolder(collection.id)
@@ -155,7 +155,7 @@ function CollectionItem({
               if (e.key === 'Escape') { setRenaming(false); setRenameValue(collection.name) }
             }}
             onBlur={handleRename}
-            className="flex-1 h-5 text-xs bg-muted/30 border border-border rounded px-1 outline-none focus:border-ring"
+            className="h-6 flex-1 rounded-[5px] border border-line-strong bg-surface px-1.5 text-[12px] outline-none transition-colors focus:border-body"
             onClick={(e) => e.stopPropagation()}
           />
         ) : (
@@ -163,7 +163,7 @@ function CollectionItem({
         )}
         <div className="hidden group-hover:flex items-center gap-0.5">
           <button
-            className="p-0.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground"
+            className="rounded-[4px] p-0.5 text-faint transition-colors hover:bg-line hover:text-body"
             onClick={(e) => { e.stopPropagation(); setRenaming(true); setRenameValue(collection.name) }}
             title="Rename"
           >
@@ -172,7 +172,7 @@ function CollectionItem({
             </svg>
           </button>
           <button
-            className="p-0.5 rounded hover:bg-accent text-muted-foreground hover:text-destructive"
+            className="rounded-[4px] p-0.5 text-faint transition-colors hover:bg-bad/10 hover:text-bad"
             onClick={(e) => { e.stopPropagation(); deleteCollection(collection.id) }}
             title="Delete"
           >
@@ -181,7 +181,7 @@ function CollectionItem({
         </div>
       </div>
       {hasChildren && isExpanded && (
-        <div className="ml-3 border-l border-border/50 pl-1">
+        <div className="ml-3 border-l border-line pl-1.5">
           {collection.children.map((child, i) => {
             if (typeof child === 'string') {
               return (
@@ -231,13 +231,13 @@ function RequestItem({
 
   return (
     <button
-      className="w-full flex items-center gap-1.5 px-2 py-1 text-xs rounded-md text-muted-foreground hover:bg-accent/50 hover:text-foreground transition-all"
+      className="flex w-full items-center gap-2 rounded-xs px-2 py-1.5 text-[12px] text-muted transition-colors duration-200 hover:bg-surface hover:text-body"
       onClick={() => {
         const tabId = createTab(requestId)
         setActiveTab(tabId)
       }}
     >
-      <FileText className="h-3 w-3 shrink-0" />
+      <FileText className="h-3 w-3 shrink-0 text-faint" />
       <span className={`text-[10px] font-mono font-semibold uppercase shrink-0 ${getMethodColor(method)}`}>
         {method}
       </span>

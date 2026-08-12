@@ -116,54 +116,55 @@ export default function CommandPalette() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-50"
+            transition={{ duration: 0.16 }}
+            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[3px]"
             onClick={() => setOpen(false)}
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -20 }}
+            initial={{ opacity: 0, scale: 0.98, y: -12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -20 }}
-            transition={{ duration: 0.15 }}
-            className="fixed top-[15%] left-1/2 -translate-x-1/2 w-[500px] max-w-[90vw] z-50 rounded-xl border border-border bg-card shadow-2xl overflow-hidden"
+            exit={{ opacity: 0, scale: 0.97, y: -8 }}
+            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed left-1/2 top-[14%] z-50 w-[540px] max-w-[90vw] -translate-x-1/2 overflow-hidden rounded-lg border border-line bg-surface-raised shadow-2xl"
           >
-            <div className="flex items-center gap-2 px-3 py-2 border-b border-border">
-              <Search className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center gap-2.5 border-b border-line px-4 py-1">
+              <Search className="h-4 w-4 shrink-0 text-faint" />
               <Input
                 ref={inputRef}
-                placeholder="Search commands..."
+                placeholder="Search commands…"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="h-8 border-0 bg-transparent text-sm focus-visible:ring-0 px-0"
+                className="h-11 border-0 bg-transparent px-0 text-sm focus:ring-0"
               />
-              <kbd className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">ESC</kbd>
+              <kbd className="shrink-0 rounded-[5px] border border-line bg-surface-sunken px-1.5 py-0.5 font-mono text-[10px] text-faint">ESC</kbd>
             </div>
-            <div className="max-h-72 overflow-y-auto p-1">
+            <div className="scrollbar-thin max-h-80 overflow-y-auto p-1.5">
               {filtered.length === 0 ? (
-                <div className="text-center py-6 text-sm text-muted-foreground">No results</div>
+                <div className="py-8 text-center text-[13px] text-muted">No commands match your search</div>
               ) : (
                 filtered.map((item, index) => (
                   <button
                     key={item.id}
-                    className={`w-full flex items-center gap-2 px-2 py-2 text-sm rounded-md transition-colors ${
-                      index === selectedIndex ? 'bg-accent text-accent-foreground' : 'text-foreground'
+                    className={`flex w-full items-center gap-3 rounded-sm px-2.5 py-2 text-sm transition-colors duration-150 ${
+                      index === selectedIndex ? 'bg-surface-sunken text-body' : 'text-body'
                     }`}
                     onClick={() => handleSelect(item)}
                     onMouseEnter={() => setSelectedIndex(index)}
                   >
-                    <div className="h-6 w-6 rounded-md bg-muted flex items-center justify-center shrink-0">
-                      <span className="text-xs">⌘</span>
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xs border border-line bg-surface text-[11px] text-faint">
+                      ⌘
                     </div>
-                    <div className="flex-1 text-left">
-                      <div className="text-sm">{item.title}</div>
+                    <div className="min-w-0 flex-1 text-left">
+                      <div className="truncate text-[13px] font-medium">{item.title}</div>
                       {item.description && (
-                        <div className="text-[11px] text-muted-foreground">{item.description}</div>
+                        <div className="truncate text-[11px] text-muted">{item.description}</div>
                       )}
                     </div>
                     {item.shortcut && (
-                      <kbd className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{item.shortcut}</kbd>
+                      <kbd className="shrink-0 rounded-[5px] border border-line bg-surface px-1.5 py-0.5 font-mono text-[10px] text-muted">{item.shortcut}</kbd>
                     )}
-                    <span className="text-[10px] text-muted-foreground">{item.category}</span>
+                    <span className="shrink-0 text-[10px] uppercase tracking-wider text-faint">{item.category}</span>
                   </button>
                 ))
               )}

@@ -28,18 +28,18 @@ export default function HistoryPanel({ searchQuery }: Props) {
 
   if (entries.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-2 py-8">
-        <History className="h-8 w-8 text-muted-foreground/30" />
-        <p className="text-xs text-muted-foreground">No history yet</p>
+      <div className="flex flex-col items-center gap-2.5 px-4 py-10">
+        <History className="h-7 w-7 text-faint/50" />
+        <p className="text-[12px] text-muted">No history yet</p>
       </div>
     )
   }
 
   return (
     <div>
-      <div className="flex items-center justify-between px-2 py-1">
-        <span className="text-xs text-muted-foreground">Recent</span>
-        <Button variant="ghost" size="icon-sm" onClick={clearHistory} className="text-muted-foreground">
+      <div className="flex items-center justify-between px-2 pb-1 pt-0.5">
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-faint">Recent</span>
+        <Button variant="ghost" size="icon-sm" onClick={clearHistory} className="text-faint hover:text-body">
           <Trash2 className="h-3 w-3" />
         </Button>
       </div>
@@ -48,27 +48,30 @@ export default function HistoryPanel({ searchQuery }: Props) {
           key={entry.id}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="w-64 min-w-0 overflow-hidden flex items-center gap-1.5 px-2 py-1.5 text-xs rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-all group"
+          className="group flex w-full min-w-0 items-center gap-2 overflow-hidden rounded-xs px-2 py-1.5 text-xs text-muted transition-colors duration-200 hover:bg-surface hover:text-body"
           onClick={() => handleClick(entry)}
         >
-          <span className={`font-mono font-semibold text-[10px] w-10 shrink-0 text-left ${getMethodColor(entry.method)}`}>
+          <span className={`w-10 shrink-0 text-left font-mono text-[10px] font-semibold ${getMethodColor(entry.method)}`}>
             {entry.method}
           </span>
 
-          <span className="truncate min-w-0 flex-1 text-left">
+          <span className="min-w-0 flex-1 truncate text-left text-[12px]">
             {entry.url || 'No URL'}
           </span>
 
           {entry.statusCode ? (
-            <span className={`text-[10px] font-mono shrink-0 tabular-nums ${entry.statusCode < 300 ? 'text-emerald-500' : entry.statusCode < 500 ? 'text-amber-500' : 'text-red-500'}`}>
+            <span className={`shrink-0 font-mono text-[10px] tabular-nums ${entry.statusCode < 300 ? 'text-good' : entry.statusCode < 500 ? 'text-warn' : 'text-bad'}`}>
               {entry.statusCode}
             </span>
           ) : (
-            <span className="text-[10px] text-muted-foreground/40 shrink-0">---</span>
+            <span className="shrink-0 text-[10px] text-faint">—</span>
           )}
 
-          <span className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0 flex" onClick={(e) => { e.stopPropagation(); removeEntry(entry.id) }}>
-            <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+          <span
+            className="flex shrink-0 rounded-[4px] p-0.5 text-faint opacity-0 transition-all duration-150 hover:bg-line hover:text-body group-hover:opacity-100"
+            onClick={(e) => { e.stopPropagation(); removeEntry(entry.id) }}
+          >
+            <X className="h-3 w-3" />
           </span>
         </motion.button>
       ))}

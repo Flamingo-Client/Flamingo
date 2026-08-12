@@ -40,7 +40,7 @@ export function getMethodColor(method: string): string {
     OPTIONS: 'text-method-options',
     HEAD: 'text-method-head',
   }
-  return colors[method.toUpperCase()] || 'text-muted-foreground'
+  return colors[method.toUpperCase()] || 'text-muted'
 }
 
 export function detectLanguage(body: string): 'json' | 'xml' | 'plaintext' {
@@ -60,5 +60,5 @@ export function getMethodBgColor(method: string): string {
     OPTIONS: 'bg-method-options/10',
     HEAD: 'bg-method-head/10',
   }
-  return colors[method.toUpperCase()] || 'bg-muted'
+  return colors[method.toUpperCase()] || 'bg-surface-sunken'
 }

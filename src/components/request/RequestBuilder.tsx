@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Send, Save, Play, Code2, ChevronDown, Download, Bookmark,
+  Save, Play, Code2, ChevronDown, Download, Bookmark, Loader2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,6 +19,7 @@ import type { HttpMethod, KeyValuePair, BodyType, AuthType, FlamingoRequest } fr
 import KeyValueEditor from './KeyValueEditor'
 import BodyEditor from './BodyEditor'
 import CollectionPicker from '@/components/CollectionPicker'
+import { Modal } from '@/components/ui/modal'
 
 const methods: HttpMethod[] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD']
 
@@ -270,11 +270,14 @@ export default function RequestBuilder() {
 
   if (!request) {
     return (
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex flex-1 items-center justify-center">
         <div className="text-center">
-          <p className="text-sm text-muted-foreground">Open a tab to start</p>
-          <Button variant="secondary" size="sm" className="mt-2" onClick={() => useTabStore.getState().createTab()}>
-            New Tab
+          <h2 className="text-[15px] font-semibold tracking-[-0.01em] text-body">No request open</h2>
+          <p className="mx-auto mt-1.5 max-w-[240px] text-[13px] leading-relaxed text-muted">
+            Open a tab to start composing a request.
+          </p>
+          <Button size="sm" className="mt-4" onClick={() => useTabStore.getState().createTab()}>
+            New tab
           </Button>
         </div>
       </div>
@@ -283,49 +286,49 @@ export default function RequestBuilder() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-3 pb-0 space-y-1">
+      <div className="space-y-2.5 px-4 pb-1 pt-3.5">
         <Input
           value={request.name === 'New Request' && !request.url ? '' : request.name}
           onChange={(e) => updateRequest(request.id, { name: e.target.value || 'New Request' })}
-          placeholder="Request name"
-          className="h-6 text-xs font-medium border-0 bg-transparent px-0 placeholder:text-muted-foreground/50 focus-visible:ring-0"
+          placeholder="Untitled request"
+          className="h-6 border-0 bg-transparent px-0 text-[15px] font-semibold tracking-[-0.01em] placeholder:font-normal placeholder:text-faint focus:ring-0"
         />
         <div className="flex items-center gap-2">
           <Select value={request.method} onValueChange={handleMethodChange}>
-            <SelectTrigger className={`w-24 h-8 text-xs font-bold border-0 ${getMethodBgColor(request.method)} ${getMethodColor(request.method)}`}>
+            <SelectTrigger className={`h-9 w-[104px] border-0 text-xs font-bold ${getMethodBgColor(request.method)} ${getMethodColor(request.method)}`}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {methods.map((m) => (
                 <SelectItem key={m} value={m}>
-                  <span className={`font-bold text-xs ${getMethodColor(m)}`}>{m}</span>
+                  <span className={`text-xs font-bold ${getMethodColor(m)}`}>{m}</span>
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
 
-          <div className="flex-1 relative">
+          <div className="relative flex-1">
             <Input
               ref={urlInputRef}
               value={request.url}
               onChange={(e) => handleUrlChange(e.target.value)}
-              placeholder="Enter URL or paste cURL command..."
-              className="h-8 text-xs font-mono pr-8"
+              placeholder="https://api.example.com/v1/users"
+              className="h-9 pr-8 font-mono text-xs"
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             />
             {request.url.toLowerCase().startsWith('curl ') && (
-              <Code2 className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-primary" />
+              <Code2 className="absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-accent" />
             )}
           </div>
 
           <Button
             size="sm"
-            className="h-8 gap-1 text-xs font-medium shadow-sm"
+            className="h-9 px-4"
             onClick={handleSend}
             disabled={activeTab?.isLoading || !request.url}
           >
             {activeTab?.isLoading ? (
-              <span className="animate-spin">⟳</span>
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
             ) : (
               <Play className="h-3.5 w-3.5 fill-current" />
             )}
@@ -334,20 +337,20 @@ export default function RequestBuilder() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8 text-xs gap-1">
+              <Button variant="outline" size="sm" className="h-9">
                 <Save className="h-3.5 w-3.5" />
                 Save
-                <ChevronDown className="h-3 w-3 opacity-50" />
+                <ChevronDown className="h-3 w-3 text-faint" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-[180px]">
-              <DropdownMenuItem onClick={handleSave} className="gap-2 text-xs">
-                <Bookmark className="h-3.5 w-3.5" />
-                Save to Collection
+            <DropdownMenuContent align="end" className="min-w-[200px]">
+              <DropdownMenuItem onClick={handleSave} className="gap-2.5">
+                <Bookmark className="h-3.5 w-3.5 text-faint" />
+                Save to collection
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleExport} className="gap-2 text-xs">
-                <Download className="h-3.5 w-3.5" />
+              <DropdownMenuItem onClick={handleExport} className="gap-2.5">
+                <Download className="h-3.5 w-3.5 text-faint" />
                 Export as .flamreq
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -356,17 +359,17 @@ export default function RequestBuilder() {
       </div>
 
       <Tabs value={activeSection} onValueChange={setActiveSection} className="flex-1 flex flex-col">
-        <div className="px-3 pt-2">
-          <TabsList className="h-7">
-            <TabsTrigger value="params" className="text-xs px-2 py-1">Params</TabsTrigger>
-            <TabsTrigger value="headers" className="text-xs px-2 py-1">Headers</TabsTrigger>
-            <TabsTrigger value="auth" className="text-xs px-2 py-1">Auth</TabsTrigger>
-            <TabsTrigger value="body" className="text-xs px-2 py-1">Body</TabsTrigger>
-            <TabsTrigger value="scripts" className="text-xs px-2 py-1">Scripts</TabsTrigger>
+        <div className="px-4 pt-3">
+          <TabsList className="h-8">
+            <TabsTrigger value="params" className="px-2.5 py-1 text-[12px]">Params</TabsTrigger>
+            <TabsTrigger value="headers" className="px-2.5 py-1 text-[12px]">Headers</TabsTrigger>
+            <TabsTrigger value="auth" className="px-2.5 py-1 text-[12px]">Auth</TabsTrigger>
+            <TabsTrigger value="body" className="px-2.5 py-1 text-[12px]">Body</TabsTrigger>
+            <TabsTrigger value="scripts" className="px-2.5 py-1 text-[12px]">Scripts</TabsTrigger>
           </TabsList>
         </div>
 
-        <div className="flex-1 overflow-auto p-3 pt-2">
+        <div className="scrollbar-thin flex-1 overflow-auto p-4 pt-3">
           <TabsContent value="params" className="mt-0">
             <KeyValueEditor
               items={request.params}
@@ -407,44 +410,31 @@ export default function RequestBuilder() {
         </div>
       </Tabs>
 
-      <AnimatePresence>
+      <Modal
+        open={!!savePick}
+        onClose={() => setSavePick(null)}
+        title="Save to collection"
+        className="max-w-sm"
+      >
         {savePick && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-            onClick={() => setSavePick(null)}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.15 }}
-              className="bg-popover border border-border rounded-xl shadow-2xl w-72 p-3 space-y-2"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h3 className="text-sm font-semibold">Save to Collection</h3>
-              <CollectionPicker
-                requestId={savePick.requestId}
-                onDone={() => setSavePick(null)}
-              />
-            </motion.div>
-          </motion.div>
+          <CollectionPicker
+            requestId={savePick.requestId}
+            onDone={() => setSavePick(null)}
+          />
         )}
-      </AnimatePresence>
+      </Modal>
     </div>
   )
 }
 
 function AuthEditor({ request }: { request: any }) {
   return (
-    <div className="space-y-2">
+    <div className="max-w-md space-y-2.5">
       <Select
         value={request.auth.type}
         onValueChange={(type) => useTabStore.getState().updateRequest(request.id, { auth: { ...request.auth, type: type as AuthType } })}
       >
-        <SelectTrigger className="w-40 h-8 text-xs">
+        <SelectTrigger className="h-8 w-44 text-xs">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -510,32 +500,32 @@ function ScriptsEditor({ request }: { request: any }) {
   const logs = activeTab?.scriptLogs || []
 
   return (
-    <div className="flex flex-col h-full gap-2">
-      <div className="space-y-1">
-        <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Pre-request Script</label>
+    <div className="flex h-full flex-col gap-4">
+      <div>
+        <label className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-faint">Pre-request script</label>
         <textarea
           value={request.scripts?.pre || ''}
           onChange={(e) => updateRequest(request.id, { scripts: { ...request.scripts, pre: e.target.value } })}
           placeholder={`// Runs before request is sent\n// Use console.log() to debug\n// Access: request.method, request.url, etc.`}
-          className="w-full h-24 text-xs font-mono bg-muted/30 border border-border rounded-md p-2 resize-none focus:outline-none focus:ring-1 focus:ring-ring"
+          className="h-24 w-full resize-none rounded-sm border border-line-strong bg-surface p-3 font-mono text-xs leading-relaxed outline-none transition-all duration-200 ease-out-expo placeholder:text-faint focus:border-body focus:ring-[3px] focus:ring-accent/[0.08]"
         />
       </div>
-      <div className="space-y-1">
-        <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Post-response Script</label>
+      <div>
+        <label className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-faint">Post-response script</label>
         <textarea
           value={request.scripts?.post || ''}
           onChange={(e) => updateRequest(request.id, { scripts: { ...request.scripts, post: e.target.value } })}
           placeholder={`// Runs after response is received\n// Use console.log() to debug\n// Access: request, response (statusCode, body, headers)`}
-          className="w-full h-24 text-xs font-mono bg-muted/30 border border-border rounded-md p-2 resize-none focus:outline-none focus:ring-1 focus:ring-ring"
+          className="h-24 w-full resize-none rounded-sm border border-line-strong bg-surface p-3 font-mono text-xs leading-relaxed outline-none transition-all duration-200 ease-out-expo placeholder:text-faint focus:border-body focus:ring-[3px] focus:ring-accent/[0.08]"
         />
       </div>
       {logs.length > 0 && (
-        <div className="space-y-1">
-          <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Output</label>
-          <div className="w-full max-h-32 overflow-y-auto bg-muted/30 border border-border rounded-md p-2 font-mono text-[10px] space-y-0.5">
+        <div>
+          <label className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-faint">Output</label>
+          <div className="scrollbar-thin max-h-32 w-full space-y-1 overflow-y-auto rounded-sm border border-line bg-surface-sunken p-3 font-mono text-[11px] leading-relaxed">
             {logs.map((log, i) => (
-              <div key={i} className={`${log.type === 'error' ? 'text-red-500' : log.type === 'warn' ? 'text-amber-500' : 'text-foreground'}`}>
-                <span className="text-muted-foreground/50">[{log.type.toUpperCase()}]</span> {log.message}
+              <div key={i} className={log.type === 'error' ? 'text-bad' : log.type === 'warn' ? 'text-warn' : 'text-body'}>
+                <span className="text-faint">[{log.type.toUpperCase()}]</span> {log.message}
               </div>
             ))}
           </div>

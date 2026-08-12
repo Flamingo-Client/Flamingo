@@ -28,13 +28,13 @@ export default function KeyValueEditor({ items, onChange, namePlaceholder = 'Key
   }
 
   return (
-    <div className="space-y-0.5">
-      <div className="grid grid-cols-[20px_1fr_1fr_24px] gap-1 items-center text-[10px] text-muted-foreground px-1 pb-1">
+    <div className="space-y-1">
+      <div className="grid grid-cols-[28px_1fr_1fr_24px] items-center gap-1.5 px-1 pb-1.5 text-[11px] font-medium tracking-wide text-faint">
         <span />
         <span>{namePlaceholder}</span>
-        <span className="flex items-center gap-1">
+        <span className="flex items-center gap-1.5">
           {valuePlaceholder}
-          <span className="text-[9px] text-muted-foreground/30">{"{{var}}"}</span>
+          <span className="font-mono text-[10px] text-faint/60">{"{{var}}"}</span>
         </span>
         <span />
       </div>
@@ -47,32 +47,32 @@ export default function KeyValueEditor({ items, onChange, namePlaceholder = 'Key
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.15 }}
-            className="grid grid-cols-[20px_1fr_1fr_24px] gap-1 items-center group"
+            className="group grid grid-cols-[28px_1fr_1fr_24px] items-center gap-1.5"
           >
             <div className="flex items-center justify-center">
               <Switch
                 checked={item.enabled}
                 onCheckedChange={(checked) => updateItem(item.id, { enabled: checked })}
-                className="scale-75 data-[state=checked]:bg-primary"
+                className="scale-75"
               />
             </div>
             <Input
               value={item.key}
               onChange={(e) => updateItem(item.id, { key: e.target.value })}
               placeholder={namePlaceholder}
-              className="h-7 text-xs border-0 bg-muted/30 px-2 rounded"
+              className="h-8 rounded-xs border-transparent bg-surface-sunken px-2.5 text-xs"
             />
             <Input
               value={item.value}
               onChange={(e) => updateItem(item.id, { value: e.target.value })}
               placeholder={valuePlaceholder}
-              className="h-7 text-xs border-0 bg-muted/30 px-2 rounded font-mono"
+              className="h-8 rounded-xs border-transparent bg-surface-sunken px-2.5 font-mono text-xs"
             />
             <Button
               variant="ghost"
               size="icon-sm"
               onClick={() => removeItem(item.id)}
-              className="opacity-0 group-hover:opacity-100 text-muted-foreground"
+              className="text-faint opacity-0 transition-opacity group-hover:opacity-100"
             >
               <X className="h-3 w-3" />
             </Button>
@@ -80,9 +80,9 @@ export default function KeyValueEditor({ items, onChange, namePlaceholder = 'Key
         ))}
       </AnimatePresence>
 
-      <Button variant="ghost" size="sm" className="text-xs text-muted-foreground w-full mt-1" onClick={addItem}>
-        <Plus className="h-3 w-3 mr-1" />
-        Add
+      <Button variant="ghost" size="sm" className="mt-1.5 w-full justify-start px-2 text-[12px]" onClick={addItem}>
+        <Plus className="h-3.5 w-3.5" />
+        Add row
       </Button>
     </div>
   )

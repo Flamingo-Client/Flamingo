@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss'
-import tailwindcssAnimate from 'tailwindcss-animate' 
+import tailwindcssAnimate from 'tailwindcss-animate'
 
+const token = (name: string) => `rgb(var(--${name}) / <alpha-value>)`
 
 const config: Config = {
   darkMode: ['class'],
@@ -18,53 +19,49 @@ const config: Config = {
     },
     extend: {
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
+        canvas: token('canvas'),
+        surface: {
+          DEFAULT: token('surface'),
+          raised: token('surface-raised'),
+          sunken: token('surface-sunken'),
         },
-        secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
+        line: {
+          DEFAULT: token('line'),
+          strong: token('line-strong'),
         },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
-        },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
-        },
+        body: token('body'),
+        muted: token('muted'),
+        faint: token('faint'),
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
+          DEFAULT: token('accent'),
+          foreground: token('accent-foreground'),
         },
+        good: token('good'),
+        warn: token('warn'),
+        bad: token('bad'),
+        danger: token('bad'),
+        idle: token('idle'),
+        method: {
+          get: token('method-get'),
+          post: token('method-post'),
+          put: token('method-put'),
+          patch: token('method-patch'),
+          delete: token('method-delete'),
+          options: token('method-neutral'),
+          head: token('method-neutral'),
+        },
+        border: token('line'),
+        input: token('line-strong'),
+        ring: token('accent'),
+        background: token('surface'),
+        foreground: token('body'),
         popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+          DEFAULT: token('surface-raised'),
+          foreground: token('body'),
         },
         card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
-        },
-        sidebar: {
-          DEFAULT: 'hsl(var(--sidebar-bg))',
-          foreground: 'hsl(var(--sidebar-foreground))',
-          muted: 'hsl(var(--sidebar-muted))',
-          border: 'hsl(var(--sidebar-border))',
-        },
-        method: {
-          get: '#22c55e',
-          post: '#3b82f6',
-          put: '#f59e0b',
-          patch: '#8b5cf6',
-          delete: '#ef4444',
-          options: '#6b7280',
-          head: '#6b7280',
+          DEFAULT: token('surface-raised'),
+          foreground: token('body'),
         },
       },
       fontFamily: {
@@ -72,11 +69,33 @@ const config: Config = {
         mono: ['GoogleSansCode', 'Cascadia Code', 'Consolas', 'monospace'],
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        xs: '6px',
+        sm: '9px',
+        md: '13px',
+        lg: '18px',
+        xl: '24px',
+        '2xl': '30px',
+      },
+      transitionTimingFunction: {
+        'out-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
+        spring: 'cubic-bezier(0.34, 1.35, 0.64, 1)',
+      },
+      boxShadow: {
+        panel: 'var(--panel-shadow)',
       },
       keyframes: {
+        'fade-in': {
+          from: { opacity: '0' },
+        },
+        'rise-in': {
+          from: { opacity: '0', transform: 'translateY(8px)' },
+        },
+        'pop-in': {
+          from: { opacity: '0', transform: 'scale(0.96) translateY(-4px)' },
+        },
+        'pop-out': {
+          to: { opacity: '0', transform: 'scale(0.97)' },
+        },
         'accordion-down': {
           from: { height: '0' },
           to: { height: 'var(--radix-accordion-content-height)' },
@@ -85,25 +104,14 @@ const config: Config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
-        'slide-in': {
-          from: { transform: 'translateX(-100%)', opacity: '0' },
-          to: { transform: 'translateX(0)', opacity: '1' },
-        },
-        'fade-in': {
-          from: { opacity: '0' },
-          to: { opacity: '1' },
-        },
-        'scale-in': {
-          from: { transform: 'scale(0.95)', opacity: '0' },
-          to: { transform: 'scale(1)', opacity: '1' },
-        },
       },
       animation: {
+        'fade-in': 'fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+        'rise-in': 'rise-in 0.32s cubic-bezier(0.16, 1, 0.3, 1)',
+        'pop-in': 'pop-in 0.16s cubic-bezier(0.16, 1, 0.3, 1)',
+        'pop-out': 'pop-out 0.12s ease-in',
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'slide-in': 'slide-in 0.2s ease-out',
-        'fade-in': 'fade-in 0.15s ease-out',
-        'scale-in': 'scale-in 0.15s ease-out',
       },
     },
   },

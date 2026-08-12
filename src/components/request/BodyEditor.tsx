@@ -1,10 +1,9 @@
-import { useState } from 'react'
 import Editor from '@monaco-editor/react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { useTabStore } from '@/stores/tab-store'
 import type { FlamingoRequest, BodyType } from '@/lib/types'
 import { useSettingsStore } from '@/stores/settings-store'
+import { useThemeStore } from '@/stores/theme-store'
 import KeyValueEditor from './KeyValueEditor'
 
 interface Props {
@@ -23,7 +22,7 @@ const bodyTypes: { value: BodyType; label: string }[] = [
 export default function BodyEditor({ request }: Props) {
   const updateRequest = useTabStore((s) => s.updateRequest)
   const settings = useSettingsStore((s) => s.settings)
-  const [editorMounted, setEditorMounted] = useState(false)
+  const resolvedTheme = useThemeStore((s) => s.resolvedTheme)
 
   const handleTypeChange = (type: string) => {
     updateRequest(request.id, { body: { ...request.body, type: type as BodyType } })
@@ -46,11 +45,11 @@ export default function BodyEditor({ request }: Props) {
 
   if (request.body.type === 'none') {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex h-full items-center justify-center">
         <div className="text-center">
-          <p className="text-xs text-muted-foreground mb-2">This request does not have a body</p>
+          <p className="mb-3 text-[13px] text-muted">This request has no body</p>
           <Select value={request.body.type} onValueChange={handleTypeChange}>
-            <SelectTrigger className="w-32 h-7 text-xs mx-auto">
+            <SelectTrigger className="mx-auto h-8 w-36 text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -66,9 +65,9 @@ export default function BodyEditor({ request }: Props) {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center gap-2 mb-2 shrink-0">
+      <div className="mb-2.5 flex shrink-0 items-center gap-2.5">
         <Select value={request.body.type} onValueChange={handleTypeChange}>
-          <SelectTrigger className="w-28 h-7 text-xs">
+          <SelectTrigger className="h-8 w-32 text-xs">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -80,28 +79,30 @@ export default function BodyEditor({ request }: Props) {
         {request.body.type === 'json' && (
           <button
             onClick={handleFormat}
-            className="text-xs text-primary hover:text-primary/80 transition-colors"
+            className="rounded-xs px-2 py-1 text-[12px] font-medium text-accent transition-colors duration-200 hover:bg-accent/[0.08]"
             title="Format JSON (pretty-print)"
           >
             Format
           </button>
         )}
         {request.body.type === 'json' && (
-          <span className="text-[9px] text-muted-foreground/30 ml-auto">Use {"{{variable}}"} for env values</span>
+          <span className="ml-auto text-[11px] text-faint">
+            Use <span className="font-mono">{"{{variable}}"}</span> for env values
+          </span>
         )}
       </div>
 
-      <div className="flex-1 min-h-0 rounded-md border border-border overflow-hidden">
+      <div className="min-h-0 flex-1 overflow-hidden rounded-sm border border-line">
         {(request.body.type === 'json' || request.body.type === 'xml' || request.body.type === 'text') && (
           <Editor
             height="100%"
             language={request.body.type === 'json' ? 'json' : request.body.type === 'xml' ? 'xml' : 'plaintext'}
             value={request.body.content}
             onChange={handleContentChange}
-            theme={document.documentElement.classList.contains('dark') ? 'vs-dark' : 'light'}
+            theme={resolvedTheme === 'dark' ? 'flamingo-dark' : 'flamingo-light'}
             loading={
-              <div className="flex items-center justify-center h-full text-xs text-muted-foreground">
-                <span className="animate-pulse">Loading editor...</span>
+              <div className="flex h-full items-center justify-center text-xs text-faint">
+                <span className="animate-pulse">Loading editor…</span>
               </div>
             }
             options={{
@@ -119,7 +120,7 @@ export default function BodyEditor({ request }: Props) {
         )}
 
         {request.body.type === 'form-data' && (
-          <div className="p-2">
+          <div className="p-3">
             <KeyValueEditor
               items={request.body.formData || []}
               onChange={(formData) => updateRequest(request.id, { body: { ...request.body, formData } })}
@@ -130,7 +131,7 @@ export default function BodyEditor({ request }: Props) {
         )}
 
         {request.body.type === 'x-www-form-urlencoded' && (
-          <div className="p-2">
+          <div className="p-3">
             <KeyValueEditor
               items={request.body.urlEncoded || []}
               onChange={(urlEncoded) => updateRequest(request.id, { body: { ...request.body, urlEncoded } })}

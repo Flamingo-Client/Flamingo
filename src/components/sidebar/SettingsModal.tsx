@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { X, Cloud, Loader2, RefreshCw, LogOut } from 'lucide-react'
+import { Cloud, Loader2, RefreshCw, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Separator } from '@/components/ui/separator'
+import { Modal } from '@/components/ui/modal'
 import { useUIStore } from '@/stores/ui-store'
 import { useSettingsStore } from '@/stores/settings-store'
 import { useThemeStore } from '@/stores/theme-store'
@@ -38,39 +38,20 @@ export default function SettingsModal() {
   }
 
   return (
-    <AnimatePresence>
-      {settingsOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-          onClick={() => setSettingsOpen(false)}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.15 }}
-            className="bg-popover border border-border rounded-xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-              <h2 className="text-sm font-semibold">Settings</h2>
-              <Button variant="ghost" size="icon-sm" onClick={() => setSettingsOpen(false)}>
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-
-            <div className="p-4 space-y-5">
-              {/* Sync Section */}
+    <Modal
+      open={settingsOpen}
+      onClose={() => setSettingsOpen(false)}
+      title="Settings"
+      description="Preferences are stored locally and synced when enabled."
+      bodyClassName="px-5 py-5"
+    >
+            <div className="space-y-6">
               <Section label="Sync">
                 <div className="space-y-3">
-                  {/* Disconnected/Error state */}
                   {(syncStatus === 'disconnected' || syncStatus === 'error' || syncStatus === 'connecting') && (
-                    <div className="space-y-2">
+                    <div className="space-y-2.5">
                       {syncStatus === 'error' && syncError && (
-                        <div className="text-xs text-destructive bg-destructive/10 rounded-md px-2 py-1.5">
+                        <div className="rounded-sm border border-bad/25 bg-bad/[0.08] px-3 py-2 text-[12px] text-bad">
                           {syncError}
                         </div>
                       )}
@@ -81,27 +62,26 @@ export default function SettingsModal() {
                         className="w-full"
                       >
                         {connectLoading || syncStatus === 'connecting' ? (
-                          <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
                         ) : (
-                          <Cloud className="h-3 w-3 mr-1" />
+                          <Cloud className="h-3.5 w-3.5" />
                         )}
-                        {syncStatus === 'connecting' ? 'Connecting...' : 'Connect'}
+                        {syncStatus === 'connecting' ? 'Connecting…' : 'Connect'}
                       </Button>
                     </div>
                   )}
 
-                  {/* Connected state */}
                   {(syncStatus === 'connected' || syncStatus === 'syncing') && (
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-between rounded-sm border border-line bg-surface-sunken px-3 py-2.5">
+                        <div className="flex items-center gap-2.5">
                           {syncStatus === 'syncing' ? (
-                            <Loader2 className="h-4 w-4 text-primary animate-spin" />
+                            <Loader2 className="h-4 w-4 animate-spin text-accent" />
                           ) : (
-                            <Cloud className="h-4 w-4 text-emerald-500" />
+                            <Cloud className="h-4 w-4 text-good" />
                           )}
-                          <span className="text-xs text-muted-foreground">
-                            {syncStatus === 'syncing' ? 'Syncing...' : 'Connected'}
+                          <span className="text-[13px] text-body">
+                            {syncStatus === 'syncing' ? 'Syncing…' : 'Connected'}
                           </span>
                         </div>
                         <div className="flex gap-1">
@@ -110,7 +90,7 @@ export default function SettingsModal() {
                             size="icon-sm"
                             onClick={() => syncNow()}
                             disabled={syncStatus === 'syncing'}
-                            title="Sync Now"
+                            title="Sync now"
                           >
                             <RefreshCw className={`h-3.5 w-3.5 ${syncStatus === 'syncing' ? 'animate-spin' : ''}`} />
                           </Button>
@@ -118,7 +98,7 @@ export default function SettingsModal() {
                             variant="ghost"
                             size="icon-sm"
                             onClick={disconnect}
-                            className="text-destructive hover:text-destructive"
+                            className="text-bad hover:bg-bad/[0.08] hover:text-bad"
                             title="Disconnect"
                           >
                             <LogOut className="h-3.5 w-3.5" />
@@ -126,9 +106,8 @@ export default function SettingsModal() {
                         </div>
                       </div>
 
-                      {/* Error indicator */}
                       {syncStatus !== 'syncing' && syncError && (
-                        <div className="text-xs text-destructive bg-destructive/10 rounded-md px-2 py-1.5">
+                        <div className="rounded-sm border border-bad/25 bg-bad/[0.08] px-3 py-2 text-[12px] text-bad">
                           {syncError}
                         </div>
                       )}
@@ -139,11 +118,10 @@ export default function SettingsModal() {
 
               <Separator />
 
-              {/* Sync Config */}
               {(syncStatus === 'connected' || syncStatus === 'syncing') && syncConfig && (
                 <>
-                  <Section label="Sync Categories">
-                    <div className="space-y-2.5">
+                  <Section label="Sync categories">
+                    <div className="space-y-3">
                       <SyncToggle
                         label="Request History"
                         checked={syncConfig.sync_history}
@@ -175,14 +153,15 @@ export default function SettingsModal() {
                 </>
               )}
 
-              {/* Theme */}
               <Section label="Theme">
-                <div className="flex gap-1">
+                <div className="flex gap-1.5">
                   {(['light', 'dark', 'system'] as const).map((t) => (
                     <button
                       key={t}
-                      className={`flex-1 py-1.5 px-2 text-xs rounded-md transition-all ${
-                        theme === t ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:text-foreground'
+                      className={`flex-1 rounded-sm border px-2 py-2 text-[12px] font-medium transition-all duration-200 ease-out-expo ${
+                        theme === t
+                          ? 'border-accent bg-accent/[0.08] text-accent'
+                          : 'border-line text-muted hover:border-line-strong hover:text-body'
                       }`}
                       onClick={() => setTheme(t)}
                     >
@@ -192,69 +171,71 @@ export default function SettingsModal() {
                 </div>
               </Section>
 
-              {/* Font Size */}
-              <Section label={`Font Size (${settings.fontSize})`}>
+              <Section label="Editor font size" hint={`${settings.fontSize}px`}>
                 <input
                   type="range"
                   min="12"
                   max="18"
                   value={settings.fontSize}
                   onChange={(e) => updateSettings({ fontSize: parseInt(e.target.value) })}
-                  className="w-full h-1 accent-primary"
+                  className="h-1 w-full accent-accent"
                 />
               </Section>
 
-              {/* Request Timeout */}
-              <Section label="Request Timeout (ms)">
+              <Section label="Request timeout" hint="milliseconds">
                 <Input
                   type="number"
                   value={settings.timeout}
                   onChange={(e) => updateSettings({ timeout: parseInt(e.target.value) || 30000 })}
-                  className="h-7 text-xs"
+                  className="h-9 text-xs"
                 />
               </Section>
 
-              {/* Behavior */}
               <Section label="Behavior">
                 <div className="space-y-3">
-                  <Row label="Auto Save">
+                  <Row label="Auto save">
                     <Switch checked={settings.autoSave} onCheckedChange={(c) => updateSettings({ autoSave: c })} />
                   </Row>
-                  <Row label="Restore Session">
+                  <Row label="Restore session">
                     <Switch checked={settings.restoreSession} onCheckedChange={(c) => updateSettings({ restoreSession: c })} />
                   </Row>
-                  <Row label="Follow Redirects">
+                  <Row label="Follow redirects">
                     <Switch checked={settings.followRedirects} onCheckedChange={(c) => updateSettings({ followRedirects: c })} />
                   </Row>
                 </div>
               </Section>
 
-              {/* Clear History */}
               <Separator />
-              <div className="pt-1">
-                <button
-                  className="text-xs text-destructive hover:text-destructive/80 transition-colors"
+
+              <div className="flex items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <p className="text-[13px] font-medium text-body">Clear history</p>
+                  <p className="mt-0.5 text-[12px] text-muted">Removes every stored request from this device.</p>
+                </div>
+                <Button
+                  variant="destructive"
+                  size="sm"
                   onClick={() => {
                     if (confirm('Clear all history?')) {
                       clearHistory()
                     }
                   }}
                 >
-                  Clear History
-                </button>
+                  Clear
+                </Button>
               </div>
             </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    </Modal>
   )
 }
 
-function Section({ label, children }: { label: string; children: React.ReactNode }) {
+function Section({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-2">
-      <div className="text-xs font-medium text-foreground">{label}</div>
+    <div>
+      <div className="mb-2 flex items-baseline justify-between gap-3">
+        <span className="text-[12px] font-medium tracking-wide text-muted">{label}</span>
+        {hint && <span className="font-mono text-[11px] text-faint">{hint}</span>}
+      </div>
       {children}
     </div>
   )
@@ -263,7 +244,7 @@ function Section({ label, children }: { label: string; children: React.ReactNode
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className="text-[13px] text-body">{label}</span>
       {children}
     </div>
   )
@@ -280,7 +261,7 @@ function SyncToggle({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className="text-[13px] text-body">{label}</span>
       <Switch checked={checked} onCheckedChange={onChange} />
     </div>
   )

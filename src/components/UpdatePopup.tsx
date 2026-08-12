@@ -91,58 +91,52 @@ export default function UpdatePopup() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/50"
+            transition={{ duration: 0.16 }}
+            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[3px]"
             onClick={() => setDismissed(true)}
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.15 }}
-            className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+            initial={{ opacity: 0, y: 8, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.97 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center"
           >
             <div
-              className="bg-popover border border-border rounded-xl shadow-2xl w-80 p-4 space-y-3 pointer-events-auto"
+              className="pointer-events-auto w-[340px] overflow-hidden rounded-lg border border-line bg-surface-raised shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Download className="h-4 w-4 text-primary" />
-                  <h3 className="text-sm font-semibold">New version available</h3>
+              <div className="flex items-start justify-between gap-4 border-b border-line px-4 py-3.5">
+                <div className="flex items-center gap-2.5">
+                  <Download className="h-4 w-4 text-accent" />
+                  <h3 className="text-[14px] font-semibold tracking-[-0.01em]">Update available</h3>
                 </div>
                 <button
-                  className="p-0.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground"
+                  className="rounded-xs p-1 text-faint transition-colors duration-200 hover:bg-surface-sunken hover:text-body"
                   onClick={() => setDismissed(true)}
                 >
                   <X className="h-4 w-4" />
                 </button>
               </div>
 
-              <div className="text-xs text-muted-foreground space-y-1">
-                <p>
-                  <span className="text-foreground">v{__APP_VERSION__}</span>
-                  <span className="mx-1.5">&rarr;</span>
-                  <span className="text-primary font-semibold">v{release.version}</span>
+              <div className="space-y-2.5 px-4 py-4">
+                <div className="flex items-center gap-2 font-mono text-[12px]">
+                  <span className="rounded-full border border-line bg-surface-sunken px-2 py-0.5 text-muted">v{__APP_VERSION__}</span>
+                  <span className="text-faint">&rarr;</span>
+                  <span className="rounded-full bg-accent px-2 py-0.5 font-semibold text-accent-foreground">v{release.version}</span>
+                </div>
+                <p className="text-[12px] leading-relaxed text-muted">
+                  A newer release of Flamingo is available with the latest features and fixes.
                 </p>
-                <p>A new version of Flamingo is available. Download the latest release to get new features and fixes.</p>
               </div>
 
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  className="flex-1 text-xs gap-1"
-                  onClick={handleDownload}
-                >
-                  <Download className="h-3 w-3" />
+              <div className="flex items-center gap-2 border-t border-line px-4 py-3">
+                <Button size="sm" className="flex-1" onClick={handleDownload}>
+                  <Download className="h-3.5 w-3.5" />
                   Download
-                  <ExternalLink className="h-3 w-3" />
+                  <ExternalLink className="h-3 w-3 opacity-60" />
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-xs"
-                  onClick={() => setDismissed(true)}
-                >
+                <Button variant="ghost" size="sm" onClick={() => setDismissed(true)}>
                   Later
                 </Button>
               </div>
