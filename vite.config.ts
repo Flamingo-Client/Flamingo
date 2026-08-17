@@ -16,7 +16,7 @@ export default defineConfig(async () => {
     },
     plugins: [
       react(),
-      visualizer(),
+      // visualizer(),
       monacoEditorPlugin({
         languageWorkers: ['json', 'editorWorkerService', 'typescript'],
       }),
