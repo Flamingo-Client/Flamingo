@@ -5,4 +5,4 @@ dist-electron
 *.log
 .DS_Store
 
-stats.html
+./stats.html
