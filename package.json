@@ -1,6 +1,6 @@
 {
   "name": "flamingo",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A modern desktop API client",
   "main": "electron/main.js",
   "homepage": "https://www.flamingo-client.com/",
